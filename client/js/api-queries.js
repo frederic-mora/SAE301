@@ -16,6 +16,9 @@
  * 
  *  Le serveur renverra les données au format JSON.
  *  La fonction les retourne après conversion en objet Javascript (ou false si la requête a échoué)
+ * 
+ *  ATTENTION : La fonction est asynchrone, donc quand on l'appelle il ne faut pas oublier "await".
+ *  Exemple : let data = await getRequest(http://.../api/products);
  */
 let getRequest = async function(uri){
 
@@ -36,10 +39,12 @@ let getRequest = async function(uri){
  * 
  *  Une requête en POST correspond à une demande de création d'une ressource (dans l'exemple, création d'un produit)
  *  Pour créer la ressource, on fournit les données utiles via le paramètre data.
- *  Par exemple : postRequest("http://.../products", {name: "Marteau", category:2} )
  * 
  *  Le serveur retourne en JSON la nouvelle ressource créée en base avec son identifiant.
  *  La fonction retourne les données après conversion en objet Javascript (ou false si la requête a échoué)
+ * 
+ *  ATTENTION : La fonction est asynchrone, donc quand on l'appelle il ne faut pas oublier "await".
+ *  Exemple : let data = await postRequest(http://.../api/products, {name:"Pain", category:2});
  */
 let postRequest = async function(uri, data){
     // encodage des données au format JSON (à vous de bien transmettre ce que le serveur attend)
