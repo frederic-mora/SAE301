@@ -14,7 +14,6 @@
  *  Toutes les versions de navigateurs sorties depuis 2021 les supportent donc vous
  *  pouvez vous en servir.
  * 
-
  */
 
 
