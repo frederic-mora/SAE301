@@ -3,11 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Démo Web Component</title>
+    <title>Démo Module</title>
 </head>
 <body>
     
-    <script src="./js/api-queries.js"></script>
+   
+
+    <script type="module">
+        
+        import {Product} from "./js/class/product.js";
+        import {ProductManager} from "./js/class/product-manager.js";
+        let p = new Product(1, "pain", 2);
+        let PM = ProductManager;
+        
+        let nb = await PM.load("http://localhost:3000/api/products");
+
+        console.log(nb + " products added in the ProductManager PM");
+
+        window.PM = PM;
+    </script>
    
 </body>
 </html>

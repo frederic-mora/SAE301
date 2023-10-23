@@ -42,3 +42,4 @@ class Product {
 
 }
 
+export {Product};
