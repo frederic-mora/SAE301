@@ -22,12 +22,12 @@
  */
 let getRequest = async function(uri){
 
-    options = {
+    let options = {
         method: "GET"
     };
 
     let response = await fetch(uri, options); // exécution (asynchrone) de la requête et attente de la réponse
-    $obj = await response.json(); // extraction du json retourné par le serveur (opération asynchrone aussi)
+    let $obj = await response.json(); // extraction du json retourné par le serveur (opération asynchrone aussi)
     return $obj; // et on retourne le tout (response.json() a déjà converti le json en objet Javscript)
 }
 
@@ -48,17 +48,17 @@ let getRequest = async function(uri){
  */
 let postRequest = async function(uri, data){
     // encodage des données au format JSON (à vous de bien transmettre ce que le serveur attend)
-    json = JSON.stringify(data);
+    let json = JSON.stringify(data);
 
     // Défition des options de la requêtes
-    options = {
+    let options = {
         method: 'POST',
         headers: {'Content-type': 'application/json;charset=utf-8'}, // on précise que la requête contient du json
         body: json // le json est placé dans le corps de la requête
     }
 
     let response = await fetch(uri, options); // exécution (asynchrone) de la requête et attente de la réponse
-    $obj = await response.json(); // extraction du json retourné par le serveur (opération asynchrone aussi)
+    let $obj = await response.json(); // extraction du json retourné par le serveur (opération asynchrone aussi)
     return $obj; // et on retourne le tout (response.json() a déjà converti le json en objet Javscript)
 }
 
