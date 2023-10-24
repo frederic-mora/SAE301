@@ -31,6 +31,10 @@ class HttpRequest {
         $tmp = explode("?", $uri); // pour "enlever" les éventuels paramètres en GETE
         $tmp = $tmp[0];
         $tmp = explode("/", $tmp);
+
+        while( count($tmp)>1 && $tmp[1] != "api"){
+            array_shift($tmp);
+        }
        
         // selon la convention choisie, une requête est valide si elle 
         // est de la forme /api/ressources/{id} (plus éventuellement des paramètres)
