@@ -7,21 +7,19 @@
 </head>
 <body>
     
+    <section></section>
    
+    <template id="product-template">
+        <article style="border-style: dashed;">
+            <div>{{id}}</div>
+            <div>{{name}}</div>
+            <div>{{category}}</div>
+        </article>
+    </template>
 
     <script type="module">
-        
-        import {Product} from "./js/class/product.js";
-        import {ProductManager} from "./js/class/product-manager.js";
-        let p = new Product(1, "pain", 2);
-        let PM = ProductManager;
-        
-        let nb = await PM.load("http://localhost:3000/api/products");
-
-        console.log(nb + " products added in the ProductManager PM");
-
-        window.PM = PM;
-        
+        import {App} from './js/app.js';
+        App.init();
     </script>
 
    

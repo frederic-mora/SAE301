@@ -44,10 +44,14 @@ class ProductCollection {
         return this.#products.find( p => p.getId()==id );
     }
 
+    findAll(){
+        return this.#products;
+    }
+
     findByCategory(idcat){
         return this.#products.filter( p => p.getIdCategory()==idcat);
     }
 }
 
 
-export let ProductManager = new ProductCollection();
+export {ProductCollection}

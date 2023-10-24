@@ -13,7 +13,7 @@ class HttpRequest {
     private string $method; // métho de la requête (GET, POST, DELETE, PATCH, PUT)
     private string $ressources = "none"; // type de ressource ciblée, extrait de l'URI (par exemple "products"...)
     private string $id = ""; // identifiant de la ressource (pas forcément défini, notament en POST ou en GET)
-    private ?array $params = null; // éventuels paramètres de la requête (on a bien dit "éventuel")
+    private ?array $params = null; // éventuels paramètres de la requête (on a bien dit "éventuels")
     private string $json = ""; // données json transmise par le client (seulement en cas de requête en POST, PATCH ou PUT)
 
     /**
@@ -31,6 +31,10 @@ class HttpRequest {
         $tmp = explode("?", $uri); // pour "enlever" les éventuels paramètres en GETE
         $tmp = $tmp[0];
         $tmp = explode("/", $tmp);
+
+        while( count($tmp)>1 && $tmp[1]!="api"){
+            array_shift($tmp);
+        }
        
         // selon la convention choisie, une requête est valide si elle 
         // est de la forme /api/ressources/{id} (plus éventuellement des paramètres)
