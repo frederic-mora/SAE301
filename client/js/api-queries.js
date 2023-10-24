@@ -48,7 +48,7 @@ let getRequest = async function(uri){
  */
 let postRequest = async function(uri, data){
     // encodage des données au format JSON (à vous de bien transmettre ce que le serveur attend)
-    json = JSON.stringify(data);
+    let json = JSON.stringify(data);
 
     // Défition des options de la requêtes
     let options = {
