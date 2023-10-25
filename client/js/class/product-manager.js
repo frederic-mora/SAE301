@@ -4,8 +4,8 @@ import { getRequest, postRequest } from "../api-queries.js";
 
 class ProductCollection {
 
-    #uri;
-    #products;
+    #uri; // pour mémoriser l'uri utilisée pour chargée les produits (peut être utile si refresh, enregistrement de produit etc...)
+    #products; // tableau de Product
 
     constructor(){
         this.#uri = "";
@@ -22,6 +22,7 @@ class ProductCollection {
         return this.#products.length;
     }
 
+    // # marche aussi sur les méthodes
     #add(p){
         if ( p instanceof Product) // prevent from adding object that are not Product instances
             this.#products.push(p);
