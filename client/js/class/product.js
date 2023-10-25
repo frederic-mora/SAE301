@@ -16,7 +16,6 @@
  * 
  */
 
-
 class Product {
     #id;
     #name;

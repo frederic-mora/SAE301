@@ -1,4 +1,5 @@
- import {ProductCollection} from "./class/product-manager.js";
+import { ProductCollection } from "./class/product-manager.js";
+import { productRenderer } from "./renderer/product-renderer.js";
        
 
  let M = {
@@ -10,19 +11,9 @@
  V.init = function(){
     document.querySelector("section").addEventListener("click", C.handler);
  }
+ 
  V.render = function(data){
-    let tpl = document.querySelector("#product-template").innerHTML;
-    let html = "";
-    let all = "";
-    for(let p of data){
-        html = tpl.replace("{{id}}", p.getId() );
-        html = html.replace("{{name}}", p.getName() );
-        html = html.replace("{{category}}", p.getIdCategory() );
-        all += html;
-    }
-
-    document.querySelector("section").innerHTML = all;
-
+    document.querySelector("section").innerHTML = productRenderer(data);
  }
 
  let C = {}
@@ -36,7 +27,7 @@
      let nb = await M.products.load("http://localhost:3000/api/products");
      console.log(nb + " products added in the ProductCollection");
      V.init();
-     V.render(M.products.findAll());
+     V.render(M.products.findByCategory(2));
  }
 
 

@@ -55,3 +55,4 @@ class ProductCollection {
 
 
 export {ProductCollection}
+
