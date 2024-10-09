@@ -4,6 +4,8 @@
  */
 
 
+let API_URL = "http://localhost:8888/api/";
+
 
 /**
  *  getRequest
@@ -26,7 +28,11 @@ let getRequest = async function(uri){
         method: "GET"
     };
 
-    let response = await fetch(uri, options); // exécution (asynchrone) de la requête et attente de la réponse
+    let response = await fetch(API_URL+uri, options); // exécution (asynchrone) de la requête et attente de la réponse
+    if (response.status != 200){
+        console.error("Erreur de requête : "+response.status); // affichage de l'erreur dans la console
+        return false; // si le serveur a renvoyé une erreur, on retourne false
+    }  // si le serveur a renvoyé une erreur, on retourne false
     let $obj = await response.json(); // extraction du json retourné par le serveur (opération asynchrone aussi)
     return $obj; // et on retourne le tout (response.json() a déjà converti le json en objet Javscript)
 }
@@ -57,7 +63,7 @@ let postRequest = async function(uri, data){
         body: json // le json est placé dans le corps de la requête
     }
 
-    let response = await fetch(uri, options); // exécution (asynchrone) de la requête et attente de la réponse
+    let response = await fetch(API_URL+uri, options); // exécution (asynchrone) de la requête et attente de la réponse
     let $obj = await response.json(); // extraction du json retourné par le serveur (opération asynchrone aussi)
     return $obj; // et on retourne le tout (response.json() a déjà converti le json en objet Javscript)
 }
@@ -93,4 +99,5 @@ let patchRequest = async function(uri, data){
    // Pas implémenté. TODO if needed.
 }
 
-export {getRequest, postRequest};
+
+export {getRequest, postRequest }
