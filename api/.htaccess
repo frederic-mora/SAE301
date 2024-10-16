@@ -1,3 +1,7 @@
+Header set Access-Control-Allow-Origin "*" # à modifier en fonction de votre configuration
+Header set Access-Control-Allow-Methods "GET, POST, DELETE, PATCH, OPTIONS"
+Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+  
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
