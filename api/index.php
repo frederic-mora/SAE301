@@ -31,6 +31,12 @@ $router = [
 // objet HttpRequest qui contient toutes les infos utiles sur la requêtes (voir class/HttpRequest.php)
 $request = new HttpRequest();
 
+// gestion des requêtes preflight (CORS)
+if ($request->getMethod() == "OPTIONS"){
+    http_response_code(200);
+    exit();
+}
+
 // on récupère la ressource ciblée par la requête
 $route = $request->getRessources();
 
