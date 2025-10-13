@@ -23,7 +23,7 @@ abstract class EntityRepository {
         // Modifiez ici vos informations de BDD et de connexion
         $this->cnx = new PDO("mysql:host=mmi.unilim.fr;dbname=pain11", "pain11", "pain11");
     }
-
+//COMMIT 1
     /**
      *  find
      *  Query the data base for the entity with id $id.
