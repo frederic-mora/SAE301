@@ -1,6 +1,3 @@
-
-
-
 /**
  * Renders a template string by replacing placeholders with corresponding data values.
  *
@@ -29,3 +26,13 @@ function htmlToFragment(htmlString) {
 }
 
 export { genericRenderer, htmlToFragment };
+
+/**
+ * Generates the path to an image in the assets folder.
+ *
+ * @param {string} filename - The name of the image file.
+ * @returns {string} - The path to the image in the assets folder.
+ */
+export function assetPath(filename) {
+    return `/src/assets/${filename}`;
+}

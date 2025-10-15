@@ -38,6 +38,8 @@ class ProductController extends EntityController {
         $p = new Product(0); // 0 is a symbolic and temporary value since the product does not have a real id yet.
         $p->setName($obj->name);
         $p->setIdcategory($obj->category);
+        $p->setPrice($obj->price);
+        $p->setImageUrl($obj->imageUrl);
         $ok = $this->products->save($p); 
         return $ok ? $p : false;
     }

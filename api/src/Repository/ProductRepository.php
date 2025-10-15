@@ -40,6 +40,8 @@ class ProductRepository extends EntityRepository {
         $p = new Product($answer->id);
         $p->setName($answer->name);
         $p->setIdcategory($answer->category);
+        $p->setPrice($answer->price);
+        $p->setImageUrl($answer->imageUrl);
         return $p;
     }
 
@@ -47,32 +49,34 @@ class ProductRepository extends EntityRepository {
         $requete = $this->cnx->prepare("select * from Product");
         $requete->execute();
         $answer = $requete->fetchAll(PDO::FETCH_OBJ);
-
         $res = [];
         foreach($answer as $obj){
             $p = new Product($obj->id);
             $p->setName($obj->name);
             $p->setIdcategory($obj->category);
+            $p->setPrice($obj->price);
+            $p->setImageUrl($obj->imageUrl);
             array_push($res, $p);
         }
-       
         return $res;
     }
 
     public function save($product){
-        $requete = $this->cnx->prepare("insert into Product (name, category) values (:name, :idcategory)");
+        $requete = $this->cnx->prepare("insert into Product (name, category, price, imageUrl) values (:name, :idcategory, :price, :imageUrl)");
         $name = $product->getName();
         $idcat = $product->getIdcategory();
+        $price = $product->getPrice();
+        $imageUrl = $product->getImageUrl();
         $requete->bindParam(':name', $name );
         $requete->bindParam(':idcategory', $idcat);
-        $answer = $requete->execute(); // an insert query returns true or false. $answer is a boolean.
-
+        $requete->bindParam(':price', $price);
+        $requete->bindParam(':imageUrl', $imageUrl);
+        $answer = $requete->execute();
         if ($answer){
-            $id = $this->cnx->lastInsertId(); // retrieve the id of the last insert query
-            $product->setId($id); // set the product id to its real value.
+            $id = $this->cnx->lastInsertId();
+            $product->setId($id);
             return true;
         }
-          
         return false;
     }
 

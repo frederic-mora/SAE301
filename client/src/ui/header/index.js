@@ -1,16 +1,15 @@
-import { htmlToFragment } from "../../lib/utils.js";
+import { htmlToFragment, genericRenderer, assetPath } from "../../lib/utils.js";
 import template from "./template.html?raw";
 
 // HeaderView est un composant statique
-// on ne fait que charger le template HTML
-// en donnant la possibilité de l'avoir sous forme html ou bien de dom
+// on injecte dynamiquement le chemin du logo
 let HeaderView = {
   html: function () {
-    return template;
+    return genericRenderer(template, { logoSrc: assetPath('Logo.png') });
   },
 
   dom: function () {
-    return htmlToFragment(template);
+    return htmlToFragment(genericRenderer(template, { logoSrc: assetPath('Logo.png') }));
   }
 };
 
