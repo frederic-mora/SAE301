@@ -1,7 +1,17 @@
-// Classe Router avec paramètres dynamiques et guards d'authentification
+// Classe Router avec paramètres dynamiques, guards et layouts
 class Router {
-  constructor(options = {}) {
+  constructor(id, options = {}) {
+    let root = document.getElementById(id);
+
+    if (!root) {
+      root = document.createElement('div');
+      console.warn(`Element with id "${id}" not found. Creating a new div as root.`);
+      document.body.appendChild(root);
+    }
+
+    this.root = root;
     this.routes = [];
+    this.layouts = {};
     this.currentRoute = null;
     this.isAuthenticated = false;
     this.loginPath = options.loginPath || '/login';
@@ -23,6 +33,28 @@ class Router {
     this.isAuthenticated = isAuth;
   }
   
+  // Enregistrer un layout pour un segment de route
+  addLayout(pathPrefix, layoutFn) {
+    this.layouts[pathPrefix] = layoutFn;
+    return this;
+  }
+  
+  // Trouver le layout correspondant à un chemin
+  findLayout(path) {
+    // Chercher le segment le plus spécifique (le plus long qui match)
+    let matchedLayout = null;
+    let longestMatch = 0;
+    
+    for (const [prefix, layout] of Object.entries(this.layouts)) {
+      if (path.startsWith(prefix) && prefix.length > longestMatch) {
+        matchedLayout = layout;
+        longestMatch = prefix.length;
+      }
+    }
+    
+    return matchedLayout;
+  }
+  
   // Ajouter une route
   addRoute(path, handler, options = {}) {
     const regex = this.pathToRegex(path);
@@ -32,7 +64,8 @@ class Router {
       regex, 
       keys, 
       handler,
-      requireAuth: options.requireAuth || false
+      requireAuth: options.requireAuth || false,
+      useLayout: options.useLayout !== false // true par défaut
     });
     return this;
   }
@@ -86,7 +119,6 @@ class Router {
       if (route.regex.test(path)) {
         // Vérifier l'authentification si nécessaire
         if (route.requireAuth && !this.isAuthenticated) {
-          // Sauvegarder la route demandée pour redirection après login
           sessionStorage.setItem('redirectAfterLogin', path);
           this.navigate(this.loginPath);
           return;
@@ -94,7 +126,19 @@ class Router {
         
         this.currentRoute = path;
         const params = this.getParams(route, path);
-        route.handler(params);
+        
+        // Générer le contenu de la page
+        const content = route.handler(params);
+        
+        if (content instanceof Promise) {
+          // Le handler retourne une promesse
+          content.then(res => {
+            this.renderContent(res, route, path);
+          });
+        } else {
+          // Le handler retourne directement le contenu
+          this.renderContent(content, route, path);
+        }
         return;
       }
     }
@@ -102,7 +146,81 @@ class Router {
     // Route 404 si aucune correspondance
     const notFound = this.routes.find(r => r.path === '*');
     if (notFound) {
-      notFound.handler({});
+      const content = notFound.handler({});
+      this.root.innerHTML = content;
+    }
+  }
+  
+  // Rendre le contenu dans le root ou via un layout
+  renderContent(content, route, path) {
+    const isFragment = content instanceof DocumentFragment;
+    
+    // Appliquer le layout seulement si useLayout est true
+    if (route.useLayout) {
+      const layoutFn = this.findLayout(path);
+      if (layoutFn) {
+        // Le layout retourne un DocumentFragment
+        const layoutFragment = layoutFn();
+        
+        // Chercher l'élément <slot> dans le layout
+        const contentSlot = layoutFragment.querySelector('slot');
+        
+        if (contentSlot) {
+          // Insérer le contenu de la page dans le slot
+          if (isFragment) {
+            contentSlot.replaceWith(content);
+          } else {
+            // Créer un fragment temporaire pour le HTML string
+            const tempFragment = document.createElement('template');
+            tempFragment.innerHTML = content;
+            contentSlot.replaceWith(tempFragment.content);
+          }
+        } else {
+          console.warn('Layout does not contain a <slot> element. Content will not be inserted.');
+        }
+        
+        // Insérer le layout complet dans this.root
+        this.root.innerHTML = '';
+        this.root.appendChild(layoutFragment);
+      } else {
+        // Pas de layout trouvé, afficher directement
+        if (isFragment) {
+          this.root.innerHTML = '';
+          this.root.appendChild(content);
+        } else {
+          this.root.innerHTML = content;
+        }
+      }
+    } else {
+      // Pas de layout, afficher directement
+      if (isFragment) {
+        this.root.innerHTML = '';
+        this.root.appendChild(content);
+      } else {
+        this.root.innerHTML = content;
+      }
+    }
+    
+    // Attacher les event listeners après le rendu
+    this.attachEventListeners(path);
+  }
+  
+  // Attacher les event listeners après le rendu
+  attachEventListeners(path) {
+    // Event listener pour le bouton de login
+    const loginBtn = document.getElementById('loginBtn');
+    if (loginBtn) {
+      loginBtn.addEventListener('click', () => {
+        this.login();
+      });
+    }
+    
+    // Event listener pour le bouton de logout
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        this.logout();
+      });
     }
   }
   
@@ -111,7 +229,7 @@ class Router {
     this.setAuth(true);
     const redirect = sessionStorage.getItem('redirectAfterLogin');
     sessionStorage.removeItem('redirectAfterLogin');
-    this.navigate(redirect || '/');
+    this.navigate(redirect || '/dashboard');
   }
   
   // Se déconnecter
@@ -125,4 +243,5 @@ class Router {
     this.handleRoute();
   }
 }
+
 export { Router };

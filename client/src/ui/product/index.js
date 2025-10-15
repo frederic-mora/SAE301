@@ -1,14 +1,19 @@
-import { genericRenderer } from "../../lib/utils.js";
+import { genericRenderer, htmlToFragment } from "../../lib/utils.js";
 import template from "./template.html?raw";
 
 let ProductView = {
-  render: function (data) {
-    let html = "";
+  html: function (data) {
+    let htmlString = '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">';
     for (let obj of data) {
-      html += genericRenderer(template, obj);
+      htmlString  += genericRenderer(template, obj);
     }
-    return html;
+    return htmlString + '</div>';
   },
+
+  dom: function (data) {
+    return htmlToFragment( ProductView.html(data) );
+  }
+
 };
 
 export { ProductView };

@@ -11,9 +11,21 @@
 let genericRenderer = function(template, data){
     let html = template;
     for(let key in data){
-        html = html.replace(new RegExp("{{"+key+"}}", "g"), data[key]);
+        html = html.replaceAll(new RegExp("{{"+key+"}}", "g"), data[key]);
     }
     return html;
 }
 
-export { genericRenderer };
+/**
+ * Converts an HTML string into a DocumentFragment.
+ *
+ * @param {string} htmlString - The HTML string to convert.
+ * @returns {DocumentFragment} - A DocumentFragment containing the parsed HTML elements.
+ */
+function htmlToFragment(htmlString) {
+    const template = document.createElement('template');
+    template.innerHTML = htmlString.trim(); // trim supprime les espaces inutiles
+    return template.content;
+}
+
+export { genericRenderer, htmlToFragment };
