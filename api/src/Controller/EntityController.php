@@ -1,5 +1,5 @@
 <?php 
-require_once("src/Class/HttpRequest.php");
+require_once __DIR__ . '/../Class/HttpRequest.php';
 
 /**
  *  Class EntityController

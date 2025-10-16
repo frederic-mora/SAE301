@@ -1,7 +1,7 @@
 <?php
 
-require_once("src/Repository/EntityRepository.php");
-require_once("src/Class/Product.php");
+require_once __DIR__ . '/EntityRepository.php';
+require_once __DIR__ . '/../Class/Product.php';
 
 
 /**

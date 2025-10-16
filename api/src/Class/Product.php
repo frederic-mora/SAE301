@@ -1,6 +1,6 @@
 <?php
 
-require_once ('Entity.php');
+require_once __DIR__ . '/Entity.php';
 
 /**
  *  Class Product
@@ -55,7 +55,7 @@ class Product extends Entity {
      *
      */
     // Implémentation correcte de JsonSerializable : méthode nommée jsonSerialize()
-    public function jsonSerialize(): mixed{
+    public function jsonSerialize(): array{
         return [
             "id" => $this->id,
             "name" => $this->name,
