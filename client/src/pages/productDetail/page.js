@@ -2,7 +2,7 @@ import { ProductData } from "../../data/product.js";
 import { htmlToFragment } from "../../lib/utils.js";
 import { DetailView } from "../../ui/detail/index.js";
 import template from "./template.html?raw";
-
+import renderImageGalerie from '../../ui/imagegalerie/index.js';
 
 let M = {
     products: []
@@ -11,7 +11,6 @@ let M = {
 M.getProductById = function(id){
     return M.products.find(product => product.id == id);
 }
-
 
 let C = {};
 
@@ -25,16 +24,15 @@ C.handler_clickOnProduct = function(ev){
 C.init = async function(params) {
     // Récupérer l'ID depuis les paramètres de route
     const productId = params.id;
-    
+
     // Charger le produit depuis l'API
     M.products = await ProductData.fetchAll();
-    
+
     let p = M.getProductById(productId);
     console.log("Product loaded:", p);
-    
+
     return V.init(p);
 }
-
 
 let V = {};
 
@@ -47,20 +45,28 @@ V.init = function(data) {
 V.createPageFragment = function(data) {
     // Créer le fragment depuis le template
     let pageFragment = htmlToFragment(template);
-    
+
     // Générer le composant detail
     let detailDOM = DetailView.dom(data);
-    
+
     // Remplacer le slot par le composant detail
     pageFragment.querySelector('slot[name="detail"]').replaceWith(detailDOM);
-    
+
+    const galerieSlot = pageFragment.querySelector('slot[name="image-galerie"]');
+    if (galerieSlot && Array.isArray(data.images) && data.images.length > 0) {
+        const galerieDOM = renderImageGalerie({ images: data.images });
+        galerieSlot.replaceWith(galerieDOM);
+    }
+
     return pageFragment;
 }
 
 V.attachEvents = function(pageFragment) {
     // Attacher un event listener au bouton
     const addToCartBtn = pageFragment.querySelector('[data-buy]');
-    addToCartBtn.addEventListener('click', C.handler_clickOnProduct);
+    if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', C.handler_clickOnProduct);
+    }
     return pageFragment;
 }
 

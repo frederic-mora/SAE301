@@ -18,7 +18,11 @@ class Product extends Entity {
 
     private ?float $price = null; // prix du produit (nullable)
 
+    private ?string $description = null;
+
     private ?string $imageUrl = null;
+
+    private array $images = [];
 
     public function __construct(int $id){
         $this->id = $id;
@@ -61,13 +65,25 @@ class Product extends Entity {
             "name" => $this->name,
             "category" => $this->idcategory,
             "price" => $this->price,
-            "imageUrl" => $this->imageUrl
+            "description" => $this->description,
+            "imageUrl" => $this->imageUrl,
+            "images" => $this->images
         ];
     }
 
     /**
      * Get the value of name
      */
+
+
+
+    public function getImages(): array {
+        return $this->images;
+    }
+    public function setImages(array $images): self {
+        $this->images = $images;
+        return $this;
+    }
     public function getName(): ?string
     {
         return $this->name;
@@ -132,6 +148,15 @@ class Product extends Entity {
         $this->price = $price;
         return $this;
     }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+    public function setDescription(string $description): self{
+        $this->description = $description;
+        return $this;
+    }
     public function getImageUrl(): ?string
     {
         return $this->imageUrl;
@@ -141,4 +166,6 @@ class Product extends Entity {
         $this->imageUrl = $imageUrl;
         return $this;
     }
+
+
 }

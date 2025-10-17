@@ -16,7 +16,7 @@ class ProductController extends EntityController {
         $this->products = new ProductRepository();
     }
 
-   
+
     protected function processGetRequest(HttpRequest $request) {
         $id = $request->getId();
         if ($id){
@@ -41,11 +41,13 @@ class ProductController extends EntityController {
         $p->setName($obj->name);
         $p->setIdcategory($obj->category);
         $p->setPrice($obj->price);
+        $p->setDescription($obj->description);
         $p->setImageUrl($obj->imageUrl);
-        $ok = $this->products->save($p); 
+        $ok = $this->products->save($p);
         return $ok ? $p : false;
     }
-   
+
+
 }
 
 ?>

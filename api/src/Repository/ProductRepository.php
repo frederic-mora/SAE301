@@ -3,45 +3,31 @@
 require_once __DIR__ . '/EntityRepository.php';
 require_once __DIR__ . '/../Class/Product.php';
 
-
-/**
- *  Classe ProductRepository
- * 
- *  Cette classe représente le "stock" de Product.
- *  Toutes les opérations sur les Product doivent se faire via cette classe 
- *  qui tient "synchro" la bdd en conséquence.
- * 
- *  La classe hérite de EntityRepository ce qui oblige à définir les méthodes  (find, findAll ... )
- *  Mais il est tout à fait possible d'ajouter des méthodes supplémentaires si
- *  c'est utile !
- *  
- */
 class ProductRepository extends EntityRepository {
 
     public function __construct(){
-        // appel au constructeur de la classe mère (va ouvrir la connexion à la bdd)
         parent::__construct();
     }
 
     public function find($id): ?Product{
-        /*
-            La façon de faire une requête SQL ci-dessous est "meilleur" que celle vue
-            au précédent semestre (cnx->query). Notamment l'utilisation de bindParam
-            permet de vérifier que la valeur transmise est "safe" et de se prémunir
-            d'injection SQL.
-        */
-        $requete = $this->cnx->prepare("select * from Product where id=:value"); // prepare la requête SQL
-        $requete->bindParam(':value', $id); // fait le lien entre le "tag" :value et la valeur de $id
-        $requete->execute(); // execute la requête
+        $requete = $this->cnx->prepare("select * from Product where id=:value");
+        $requete->bindParam(':value', $id);
+        $requete->execute();
         $answer = $requete->fetch(PDO::FETCH_OBJ);
-        
-        if ($answer==false) return null; // may be false if the sql request failed (wrong $id value for example)
-        
+
+        if ($answer==false) return null;
+
         $p = new Product($answer->id);
         $p->setName($answer->name);
         $p->setIdcategory($answer->category);
         $p->setPrice($answer->price);
+        $p->setDescription($answer->description);
         $p->setImageUrl($answer->imageUrl);
+
+        // Récupération des images
+        $images = $this->getImagesForProduct($answer->id);
+        $p->setImages($images);
+
         return $p;
     }
 
@@ -55,21 +41,42 @@ class ProductRepository extends EntityRepository {
             $p->setName($obj->name);
             $p->setIdcategory($obj->category);
             $p->setPrice($obj->price);
+            $p->setDescription($obj->description);
             $p->setImageUrl($obj->imageUrl);
+
+            // Récupération des images
+            $images = $this->getImagesForProduct($obj->id);
+            $p->setImages($images);
+
             array_push($res, $p);
         }
         return $res;
     }
 
+    // Méthode pour récupérer les images d'un produit
+    private function getImagesForProduct(int $productId): array {
+        $stmt = $this->cnx->prepare("SELECT url FROM image WHERE produit_id = :productId");
+        $stmt->bindParam(':productId', $productId);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $images = [];
+        foreach ($rows as $row) {
+            $images[] = ["url" => $row['url']];
+        }
+        return $images;
+    }
+
     public function save($product){
-        $requete = $this->cnx->prepare("insert into Product (name, category, price, imageUrl) values (:name, :idcategory, :price, :imageUrl)");
+        $requete = $this->cnx->prepare("insert into Product (name, category, price,description, imageUrl) values (:name, :idcategory, :price, :description, :imageUrl)");
         $name = $product->getName();
         $idcat = $product->getIdcategory();
         $price = $product->getPrice();
+        $description = $product->getDescription();
         $imageUrl = $product->getImageUrl();
         $requete->bindParam(':name', $name );
         $requete->bindParam(':idcategory', $idcat);
         $requete->bindParam(':price', $price);
+        $requete->bindParam(':description', $description);
         $requete->bindParam(':imageUrl', $imageUrl);
         $answer = $requete->execute();
         if ($answer){
@@ -81,15 +88,10 @@ class ProductRepository extends EntityRepository {
     }
 
     public function delete($id){
-        // Not implemented ! TODO when needed !
         return false;
     }
 
     public function update($product){
-        // Not implemented ! TODO when needed !
         return false;
     }
-
-   
-    
 }
