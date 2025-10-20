@@ -4,7 +4,7 @@ import { AboutPage } from "./pages/about/page.js";
 import { HomePage } from "./pages/home/page.js";
 import { ProductsPage } from "./pages/products/page.js";
 import { ProductDetailPage } from "./pages/productDetail/page.js";
-
+import { ProductsCategoryPage } from "./pages/productsCategory/page.js";
 import { RootLayout } from "./layouts/root/layout.js";
 import { The404Page } from "./pages/404/page.js";
 
@@ -19,7 +19,7 @@ router.addRoute("/about", AboutPage);
 
 router.addRoute("/products", ProductsPage);
 router.addRoute("/products/:id/:slug", ProductDetailPage);
-
+router.addRoute("/category/:id/:category", ProductsCategoryPage);
 router.addRoute("*", The404Page);
 
 // Démarrer le routeur

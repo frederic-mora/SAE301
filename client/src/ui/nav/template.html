@@ -1,6 +1,25 @@
-<nav style="display: flex; flex-direction: column; gap: 0.5rem;">
-    <a href="/dashboard" data-link style="padding: 0.5rem; text-decoration: none; color: #333; border-radius: 4px;">Dashboard</a>
-    <a href="/dashboard/profile" data-link style="padding: 0.5rem; text-decoration: none; color: #333; border-radius: 4px;">Profil</a>
-    <a href="/dashboard/users/123" data-link style="padding: 0.5rem; text-decoration: none; color: #333; border-radius: 4px;">Utilisateur #123</a>
-    <a href="/dashboard/settings" data-link style="padding: 0.5rem; text-decoration: none; color: #333; border-radius: 4px;">Paramètres</a>
+<nav class="flex w-full h-[60px] px-8 py-4 justify-between items-center bg-white relative hoverRed">
+    <button id="menuBtn" class="lg:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1.5 z-20 m-3  ">
+        <span class="w-6 h-0.5 bg-black transition-all duration-300"></span>
+        <span class="w-6 h-0.5 bg-black transition-all duration-300"></span>
+        <span class="w-6 h-0.5 bg-black transition-all duration-300"></span>
+    </button>
+    
+    <div class="flex justify-between items-center w-full">
+        <ul id="menuItems" class="fixed lg:relative top-0 left-0  h-screen lg:h-auto bg-white lg:bg-transparent flex flex-col lg:flex-row justify-center space-y-8 lg:space-y-0 lg:space-x-8 text-black text-sm uppercase tracking-wider transform translate-x-[-100%] lg:translate-x-0 transition-transform duration-300 z-10 hover:cursor-pointer p-10">
+            <li><a href="/category/0/all" data-id="1" data-category data-link class="hover:text-gray-600 transition-colors">ALL</a></li>
+            <li><a href="/category/1/accessoires" data-id="2" data-category data-link class="hover:text-gray-600 transition-colors">ACCESSORY</a></li>
+            <li><a href="/category/2/bas" data-id="3" data-category data-link class="hover:text-gray-600 transition-colors">BOTTOM</a></li>
+            <li><a href="/category/3/haut" data-id="4" data-category data-link class="hover:text-gray-600 transition-colors">TOP</a></li>
+        </ul>
+       
+    </div>
+     <div class="w-[120px] h-[24px] flex items-center justify-center relative -left-1/2 -right-1/2 z-20">
+            <img src="../../../public/Design.svg" alt="EVISU" class="h-full">
+        </div>
 </nav>
+<script>
+    
+</script>
+
+
