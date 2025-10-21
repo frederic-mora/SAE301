@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('/font/Avenir LT Std 35 Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('/font/Avenir LT Std 45 Book.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('/font/Avenir LT Std 65 Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('/font/Avenir LT Std 85 Heavy.otf') format('opentype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('/font/Avenir LT Std 95 Black.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+:root {
+  --main-color: #000000;
+  --secondary-color: #FFFFFF;
+  --accent-color: #F2F2F2;
+  --font-family: 'Avenir LT Std', sans-serif;
+  --burgundy:hsla(354, 59%, 41%, 1);
+  
+}
+
+body {
+    font-family: var(--font-family);
+}
+@utility hoverRed {
+    button:hover {
+        span{
+            color: var(--burgundy);
+            background-color: var(--burgundy);
+        }
+        
+    }
+}

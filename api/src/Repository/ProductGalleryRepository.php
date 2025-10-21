@@ -60,6 +60,7 @@ class ProductGalleryRepository extends EntityRepository {
             $entity = new ProductGallery($obj->id);
             $entity->setImage($obj->image);
             $entity->setIdProd($obj->idProd);
+            $entity->setPath($obj->path);
             // $entity->setName($obj->name);
             // TODO: Hydrater chaque objet
             array_push($res, $entity);
@@ -91,6 +92,7 @@ class ProductGalleryRepository extends EntityRepository {
             $entity = new ProductGallery($obj->id);
             $entity->setImage($obj->image);
             $entity->setIdProd($obj->idProd);
+            $entity->setPath($obj->path);
             // $entity->setName($obj->name);
             // TODO: Hydrater chaque objet
             array_push($res, $entity);
@@ -100,6 +102,23 @@ class ProductGalleryRepository extends EntityRepository {
         
         
         return []; // À remplacer par votre implémentation
+    }
+    public function findPath($path): array {
+        $requete = $this->cnx->prepare("SELECT * FROM ProductGallery WHERE path=:value");
+        $requete->bindParam(':value', $path);
+        $requete->execute();
+        $answer = $requete->fetchAll(PDO::FETCH_OBJ);
+
+        $res = [];
+        foreach ($answer as $obj) {
+            $entity = new ProductGallery($obj->id);
+            $entity->setImage($obj->image);
+            $entity->setIdProd($obj->idProd);
+            $entity->setPath($obj->path);
+            array_push($res, $entity);
+        }
+        
+        return $res;
     }
 
     /**
@@ -113,12 +132,12 @@ class ProductGalleryRepository extends EntityRepository {
         // Exemple :
         
         $requete = $this->cnx->prepare(
-            "INSERT INTO ProductGallery (name, description) VALUES (:name, :description)"
+            "INSERT INTO ProductGallery (path, image) VALUES (:path, :image)"
         );
-        $name = $entity->getName();
-        $description = $entity->getDescription();
-        $requete->bindParam(':name', $name);
-        $requete->bindParam(':description', $description);
+        $path = $entity->getPath();
+        $image = $entity->getImage();
+        $requete->bindParam(':path', $path);
+        $requete->bindParam(':image', $image);
         $answer = $requete->execute();
 
         if ($answer) {
@@ -162,14 +181,14 @@ class ProductGalleryRepository extends EntityRepository {
         // Exemple :
         
         $requete = $this->cnx->prepare(
-            "UPDATE ProductGallery SET name=:name, description=:description WHERE id=:id"
+            "UPDATE ProductGallery SET name=:name, image=:image WHERE id=:id"
         );
         $id = $entity->getId();
         $name = $entity->getName();
-        $description = $entity->getDescription();
+        $image = $entity->getImage();
         $requete->bindParam(':id', $id);
         $requete->bindParam(':name', $name);
-        $requete->bindParam(':description', $description);
+        $requete->bindParam(':image', $image);
         return $requete->execute();
         
         

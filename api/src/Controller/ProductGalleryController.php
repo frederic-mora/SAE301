@@ -36,6 +36,10 @@ class ProductGalleryController extends EntityController {
             $idProd = $request->getParam("idProd");
             if ($idProd) {
                 return $this->repository->findWholeGallery($idProd);
+            }
+            else if ($path = $request->getParam("path")) {
+                // GET /api/{strtolower(ProductGallery)}s
+                return $this->repository->findPath($path);
             } else {
                 return $this->repository->findAll();
             }
@@ -70,6 +74,7 @@ class ProductGalleryController extends EntityController {
         $entity = new ProductGallery(0);
         $entity->setImage($obj->image);
         $entity->setIdProd($obj->idProd ?? null);
+        $entity->setPath($obj->path);
         // TODO: Hydrater l'objet avec les données reçues
         
         $ok = $this->repository->save($entity);

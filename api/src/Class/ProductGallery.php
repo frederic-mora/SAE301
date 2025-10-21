@@ -12,6 +12,7 @@ class ProductGallery extends Entity {
     private int $id;
     private ?string $image = null; // Exemple de propriété
     private ?string $idProd = null; // Exemple de propriété
+    private ?string $path = null;
     public function __construct(int $id) {
         $this->id = $id;
     }
@@ -26,7 +27,7 @@ class ProductGallery extends Entity {
             "id" => $this->id,
             "image" => $this->image,
             "idProd" => $this->idProd,
-            
+            "path" => $this->path
         ];
     }
 
@@ -74,6 +75,18 @@ class ProductGallery extends Entity {
         $this->idProd = $idProd;
         return $this;
     }   
+
+    public function getPath(): ?string {
+        return $this->path;
+    }
+
+    /**
+     * Set the value of path
+     */
+    public function setPath(string $path): self {
+        $this->path = $path;
+        return $this;
+    }
 
     // TODO: Ajouter vos getters et setters ici
     // Exemple :

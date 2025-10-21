@@ -2,6 +2,7 @@ import template from "./template.html?raw";
 import { htmlToFragment } from "../../lib/utils.js";
 import { HeaderView } from "../../ui/header/index.js";
 import { FooterView } from "../../ui/footer/index.js";
+import { LoginData } from "../../data/login.js";    
 
 
 
@@ -19,11 +20,23 @@ import { FooterView } from "../../ui/footer/index.js";
  * - Remplace le slot nommé "footer" par le DOM du pied de page.
  * - Retourne le fragment DOM finalisé.
  */
+let handlerProfile = function() {
+    if (LoginData.checkAuth()!=false) {
+        
+        window.location.href = '/profile';
+    }
+    else {
+        window.location.href = '/login';
+    }
+};
 export function RootLayout() {
+
     let layout = htmlToFragment(template);
     let header = HeaderView.dom();
+
     let footer = FooterView.dom();
     layout.querySelector('slot[name="header"]').replaceWith(header);
     layout.querySelector('slot[name="footer"]').replaceWith(footer);
+    layout.querySelector('button[id="profileBtn"]').addEventListener("click", handlerProfile);
     return layout;
 }
