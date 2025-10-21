@@ -36,3 +36,31 @@ export { genericRenderer, htmlToFragment };
 export function assetPath(filename) {
     return `/src/assets/${filename}`;
 }
+
+/**
+ * Parse une réponse HTTP en JSON de façon sûre :
+ * - lit le texte du body
+ * - si vide, retourne null
+ * - essaie de parser en JSON, sinon retourne un objet { text }
+ *
+ * Utilisé par le client pour récupérer les messages d'erreur renvoyés par l'API.
+ *
+ * @param {Response} res - objet Response obtenu via fetch
+ * @returns {Promise<any|null>} - JSON parsé, ou objet contenant le texte, ou null
+ */
+export async function parseJsonSafe(res) {
+    if (!res) return null;
+    // Lire le corps comme texte pour éviter les erreurs si le Content-Type n'est pas JSON
+    let text = '';
+    try {
+        text = await res.text();
+    } catch (e) {
+        return null;
+    }
+    if (!text) return null;
+    try {
+        return JSON.parse(text);
+    } catch (e) {
+        return { text };
+    }
+}

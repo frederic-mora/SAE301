@@ -52,6 +52,5 @@ V.attachEvents = function(pageFragment) {
 }
 
 export function ProductsPage(params) {
-    console.log("ProductsPage", params);
     return C.init();
 }

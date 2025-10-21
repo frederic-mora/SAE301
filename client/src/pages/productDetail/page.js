@@ -29,7 +29,6 @@ C.init = async function(params) {
     M.products = await ProductData.fetchAll();
 
     let p = M.getProductById(productId);
-    console.log("Product loaded:", p);
 
     return V.init(p);
 }
@@ -71,6 +70,5 @@ V.attachEvents = function(pageFragment) {
 }
 
 export function ProductDetailPage(params) {
-    console.log("ProductDetailPage", params);
     return C.init(params);
 }

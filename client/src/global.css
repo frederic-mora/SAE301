@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+.imagegalerie-container {
+    @apply max-w-xl mx-auto;
+}
+.imagegalerie-main {
+    @apply w-86 h-86 object-cover rounded-lg shadow;
+}
+.imagegalerie-gallery {
+    @apply flex space-x-2 mt-4;
+}
+.imagegalerie-thumb {
+    @apply w-16 h-16 object-cover rounded cursor-pointer border-2 border-transparent hover:border-blue-500;
+}
+.imagegalerie-thumb-active {
+    @apply border-blue-500;
+}

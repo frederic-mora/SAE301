@@ -4,7 +4,7 @@
  */
 
 
-let API_URL = "http://mmi.unilim.fr/~pain11/SAE301/api/";
+let API_URL = "https://mmi.unilim.fr/~pain11/SAE301/api/";
 
 
 /**
@@ -114,5 +114,11 @@ let patchRequest = async function(uri, data){
    // Pas implémenté. TODO if needed.
 }
 
+function api(path = '') {
+    const base = API_URL.replace(/\/+$/, '');
+    const p = String(path || '').replace(/^\/+/, '');
+    return p ? `${base}/${p}` : `${base}/`;
+}
 
-export {getRequest, postRequest }
+
+export { getRequest, postRequest, API_URL, api }

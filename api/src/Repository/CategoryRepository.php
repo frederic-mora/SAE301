@@ -81,7 +81,6 @@ class CategoryRepository extends EntityRepository {
      */
     public function findAllByCategory($categoryId): array {
         if (is_numeric($categoryId)) {
-            // filtre par clé étrangère (adapter le nom de colonne si besoin : category_id / category)
             $requete = $this->cnx->prepare("SELECT * FROM Product WHERE category = :cat");
             $requete->bindValue(':cat', (int)$categoryId, PDO::PARAM_INT);
         } else {

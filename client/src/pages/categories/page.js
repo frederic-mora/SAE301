@@ -1,10 +1,14 @@
+// client/src/pages/categories/page.js
 import { ProductData } from "../../data/product.js";
 import { ProductView } from "../../ui/product/index.js";
 import { htmlToFragment } from "../../lib/utils.js";
 import template from "./template.html?raw";
+import { fetchCategory } from "../../data/categories.js";
 
-let M = {
+// --- MODEL ---
+const Model = {
     products: [],
+    categoryName: "",
 
     normalizeString(s) {
         if (s === null || s === undefined) return "";
@@ -21,16 +25,16 @@ let M = {
     },
 
     filterByCategory(products, categoryName) {
-        const target = M.normalizeString(categoryName);
+        const target = this.normalizeString(categoryName);
         if (!target) return [];
         return (products || []).filter(p => {
             const fields = [
                 p && (p.category || p.category_name || p.categoryName || p.slug || p.name || p.title),
                 p && (p.category_id || p.categoryId || p.id)
-            ].flat().map(M.normalizeString);
+            ].flat().map(this.normalizeString);
             if (fields.some(v => v === target || v.includes(target))) return true;
             if (Array.isArray(p && p.categories)) {
-                return p.categories.some(c => M.normalizeString(c && (c.name || c)).includes(target));
+                return p.categories.some(c => this.normalizeString(c && (c.name || c)).includes(target));
             }
             return false;
         });
@@ -39,41 +43,37 @@ let M = {
     getCategoryIdFromHeaderByName(name) {
         try {
             const anchors = Array.from(document.querySelectorAll("#header-categories a[data-id]"));
-            const norm = M.normalizeString(name);
+            const norm = this.normalizeString(name);
             for (const a of anchors) {
-                if (M.normalizeString(a.textContent || "") === norm) return a.dataset.id;
+                if (this.normalizeString(a.textContent || "") === norm) return a.dataset.id;
                 const href = a.getAttribute("href") || "";
                 const last = href.split("/").filter(Boolean).pop() || "";
-                if (M.normalizeString(decodeURIComponent(last)) === norm) return a.dataset.id;
+                if (this.normalizeString(decodeURIComponent(last)) === norm) return a.dataset.id;
             }
         } catch (e) { /* ignore */ }
         return null;
     },
 
     async fetchProducts(categoryName) {
-        const headerId = M.getCategoryIdFromHeaderByName(categoryName);
+        const headerId = this.getCategoryIdFromHeaderByName(categoryName);
         const target = headerId || categoryName;
         let products = [];
 
-        // tentative remote
+        // Utilisation du fetch centralisé
         try {
-            const remoteUrl = `https://mmi.unilim.fr/~pain11/SAE301/api/categories/${encodeURIComponent(target)}`;
-            const r2 = await fetch(remoteUrl, { credentials: 'same-origin' });
-            if (r2 && r2.ok) {
-                const json2 = await r2.json();
-                products = M.extractArrayFromResponse(json2);
-                if (products.length) return products;
-            }
+            const json2 = await fetchCategory(target);
+            products = this.extractArrayFromResponse(json2);
+            if (products.length) return products;
         } catch (e) { /* ignore */ }
 
-        // fallback via ProductData.fetchAll
+        // Fallback via ProductData
         if (typeof ProductData.fetchAll === 'function') {
             try {
                 const respAll = await ProductData.fetchAll();
-                const all = M.extractArrayFromResponse(respAll);
-                products = M.enhancedFilter ? M.enhancedFilter(all, categoryName) : (all || []).filter(p => {
-                    const n = M.normalizeString(categoryName);
-                    return M.normalizeString(p && (p.category || p.name || p.title || '')).includes(n);
+                const all = this.extractArrayFromResponse(respAll);
+                products = this.enhancedFilter ? this.enhancedFilter(all, categoryName) : (all || []).filter(p => {
+                    const n = this.normalizeString(categoryName);
+                    return this.normalizeString(p && (p.category || p.name || p.title || '')).includes(n);
                 });
                 if (products.length) return products;
             } catch (e) { /* ignore */ }
@@ -83,63 +83,67 @@ let M = {
     }
 };
 
-let C = {};
-function getCategoryName(params) {
-    if (params && params.name) return params.name;
+// --- VIEW ---
+const View = {
+    init(data, categoryName) {
+        const fragment = this.createPageFragment(data, categoryName);
+        this.attachEvents(fragment);
+        return fragment;
+    },
 
-    try {
-        const anchors = Array.from(document.querySelectorAll('#header-categories a[href*="/categories/"]'));
-        if (anchors.length) {
-            const currentPath = location.pathname;
-            const match = anchors.find(a => {
-                const href = a.getAttribute('href') || '';
-                try { return new URL(href, location.origin).pathname === currentPath; } catch (e) { return false; }
-            });
-            const text = (match || anchors[0]).textContent || '';
-            return decodeURIComponent(text.trim());
-        }
-    } catch (e) { /* ignore */ }
+    createPageFragment(data, categoryName) {
+        const pageFragment = htmlToFragment(template);
+        const productsDOM = ProductView.dom(data);
+        const slot = pageFragment.querySelector('slot[name="products"]');
+        if (slot) slot.replaceWith(productsDOM);
 
-    const parts = location.pathname.split('/').filter(Boolean);
-    const idx = parts.indexOf('categories');
-    if (idx >= 0 && parts.length > idx + 1) return decodeURIComponent(parts[idx + 1]);
-    return 'Horlogerie';
-}
+        const nameEl = pageFragment.querySelector('[data-role="category-name"]');
+        if (nameEl) nameEl.textContent = categoryName || '';
 
-C.init = async function(params) {
-    const categoryName = getCategoryName(params);
-    const products = await M.fetchProducts(categoryName);
-    M.products = products || [];
-    M.categoryName = categoryName;
-    return V.init(M.products, categoryName);
+        return pageFragment;
+    },
+
+    attachEvents(pageFragment) {
+        const root = pageFragment.firstElementChild;
+        if (root) root.addEventListener("click", Controller.handler_clickOnProduct);
+        return pageFragment;
+    }
 };
 
-let V = {};
+// --- CONTROLLER ---
+const Controller = {
+    async init(params) {
+        const categoryName = this.getCategoryName(params);
+        const products = await Model.fetchProducts(categoryName);
+        Model.products = products || [];
+        Model.categoryName = categoryName;
+        return View.init(Model.products, categoryName);
+    },
 
-V.init = function(data, categoryName) {
-    const fragment = V.createPageFragment(data, categoryName);
-    V.attachEvents(fragment);
-    return fragment;
+    getCategoryName(params) {
+        if (params && params.name) return params.name;
+
+        try {
+            const anchors = Array.from(document.querySelectorAll('#header-categories a[href*="/categories/"]'));
+            if (anchors.length) {
+                const currentPath = location.pathname;
+                const match = anchors.find(a => {
+                    const href = a.getAttribute('href') || '';
+                    try { return new URL(href, location.origin).pathname === currentPath; } catch (e) { return false; }
+                });
+                const text = (match || anchors[0]).textContent || '';
+                return decodeURIComponent(text.trim());
+            }
+        } catch (e) { /* ignore */ }
+
+        const parts = location.pathname.split('/').filter(Boolean);
+        const idx = parts.indexOf('categories');
+        if (idx >= 0 && parts.length > idx + 1) return decodeURIComponent(parts[idx + 1]);
+        return 'Horlogerie';
+    },
 };
 
-V.createPageFragment = function(data, categoryName) {
-    const pageFragment = htmlToFragment(template);
-    const productsDOM = ProductView.dom(data);
-    const slot = pageFragment.querySelector('slot[name="products"]');
-    if (slot) slot.replaceWith(productsDOM);
-
-    const nameEl = pageFragment.querySelector('[data-role="category-name"]');
-    if (nameEl) nameEl.textContent = categoryName || '';
-
-    return pageFragment;
-};
-
-V.attachEvents = function(pageFragment) {
-    const root = pageFragment.firstElementChild;
-    if (root) root.addEventListener("click", C.handler_clickOnProduct);
-    return pageFragment;
-};
-
+// --- EXPORT ---
 export function CategoriesPage(params) {
-    return C.init(params);
+    return Controller.init(params);
 }

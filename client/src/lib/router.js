@@ -1,11 +1,12 @@
-// Classe Router avec paramètres dynamiques, guards et layouts
+// client/src/lib/router.js
+
+import { HomePage, mountHomePage } from '../pages/home/page.js';
 class Router {
   constructor(id, options = {}) {
     let root = document.getElementById(id);
 
     if (!root) {
       root = document.createElement('div');
-      console.warn(`Element with id "${id}" not found. Creating a new div as root.`);
       document.body.appendChild(root);
     }
 
@@ -13,13 +14,12 @@ class Router {
     this.routes = [];
     this.layouts = {};
     this.currentRoute = null;
+    this.currentPage = null;
     this.isAuthenticated = false;
     this.loginPath = options.loginPath || '/login';
-    
-    // Écouter les changements d'URL
+
     window.addEventListener('popstate', () => this.handleRoute());
-    
-    // Intercepter les clics sur les liens
+
     document.addEventListener('click', (e) => {
       if (e.target.matches('[data-link]')) {
         e.preventDefault();
@@ -27,62 +27,51 @@ class Router {
       }
     });
   }
-  
-  // Définir l'état d'authentification
+
   setAuth(isAuth) {
     this.isAuthenticated = isAuth;
   }
-  
-  // Enregistrer un layout pour un segment de route
+
   addLayout(pathPrefix, layoutFn) {
     this.layouts[pathPrefix] = layoutFn;
     return this;
   }
-  
-  // Trouver le layout correspondant à un chemin
+
   findLayout(path) {
-    // Chercher le segment le plus spécifique (le plus long qui match)
     let matchedLayout = null;
     let longestMatch = 0;
-    
     for (const [prefix, layout] of Object.entries(this.layouts)) {
       if (path.startsWith(prefix) && prefix.length > longestMatch) {
         matchedLayout = layout;
         longestMatch = prefix.length;
       }
     }
-    
     return matchedLayout;
   }
-  
-  // Ajouter une route
+
   addRoute(path, handler, options = {}) {
     const regex = this.pathToRegex(path);
     const keys = this.extractParams(path);
-    this.routes.push({ 
-      path, 
-      regex, 
-      keys, 
+    this.routes.push({
+      path,
+      regex,
+      keys,
       handler,
       requireAuth: options.requireAuth || false,
-      useLayout: options.useLayout !== false // true par défaut
+      useLayout: options.useLayout !== false
     });
     return this;
   }
-  
-  // Convertir un chemin en regex
+
   pathToRegex(path) {
     if (path === '*') return /.*/;
-    
     const pattern = path
-      .replace(/\//g, '\\/')
-      .replace(/:(\w+)/g, '([^\\/]+)')
-      .replace(/\*/g, '.*');
-    
+        .replace(/\//g, '\\/')
+        .replace(/:(\w+)/g, '([^\\/]+)')
+        .replace(/\*/g, '.*');
     return new RegExp('^' + pattern + '$');
   }
-  
-  // Extraire les noms des paramètres
+
   extractParams(path) {
     const params = [];
     const matches = path.matchAll(/:(\w+)/g);
@@ -91,99 +80,135 @@ class Router {
     }
     return params;
   }
-  
-  // Extraire les valeurs des paramètres
+
   getParams(route, path) {
     const matches = path.match(route.regex);
     if (!matches) return {};
-    
     const params = {};
     route.keys.forEach((key, i) => {
       params[key] = matches[i + 1];
     });
     return params;
   }
-  
-  // Naviguer vers une route
+
   navigate(path) {
     window.history.pushState(null, null, path);
     this.handleRoute();
   }
-  
-  // Gérer la route actuelle
+
   handleRoute() {
     const path = window.location.pathname;
-    
-    // Trouver la route correspondante
     for (const route of this.routes) {
       if (route.regex.test(path)) {
-        // Vérifier l'authentification si nécessaire
         if (route.requireAuth && !this.isAuthenticated) {
           sessionStorage.setItem('redirectAfterLogin', path);
           this.navigate(this.loginPath);
           return;
         }
-        
         this.currentRoute = path;
         const params = this.getParams(route, path);
-        
-        // Générer le contenu de la page
+
+        if (route.path === '/' && typeof HomePage === 'function' && typeof mountHomePage === 'function') {
+          const content = HomePage(params);
+          this.renderContent(content, route, path);
+          setTimeout(() => {
+            const container = document.getElementById('app');
+            if (container) mountHomePage(container);
+          }, 0);
+          return;
+        }
+
         const content = route.handler(params);
-        
         if (content instanceof Promise) {
-          // Le handler retourne une promesse
           content.then(res => {
             this.renderContent(res, route, path);
           });
         } else {
-          // Le handler retourne directement le contenu
           this.renderContent(content, route, path);
         }
         return;
       }
     }
-    
-    // Route 404 si aucune correspondance
     const notFound = this.routes.find(r => r.path === '*');
     if (notFound) {
       const content = notFound.handler({});
       this.root.innerHTML = content;
     }
   }
-  
-  // Rendre le contenu dans le root ou via un layout
+
   renderContent(content, route, path) {
     const isFragment = content instanceof DocumentFragment;
-    
-    // Appliquer le layout seulement si useLayout est true
+    if (content && typeof content === 'object' && typeof content.template === 'function') {
+      if (this.currentPage && typeof this.currentPage.unmount === 'function') {
+        try { this.currentPage.unmount(); } catch (e) {}
+        this.currentPage = null;
+      }
+      const page = content;
+      const templateResult = page.template();
+      const doRender = (rendered) => {
+        const renderedIsFragment = rendered instanceof DocumentFragment;
+        if (route.useLayout) {
+          const layoutFn = this.findLayout(path);
+          if (layoutFn) {
+            const layoutFragment = layoutFn();
+            const contentSlot = layoutFragment.querySelector('slot');
+            if (contentSlot) {
+              if (renderedIsFragment) {
+                contentSlot.replaceWith(rendered);
+              } else {
+                const tempFragment = document.createElement('template');
+                tempFragment.innerHTML = rendered;
+                contentSlot.replaceWith(tempFragment.content);
+              }
+            }
+            this.root.innerHTML = '';
+            this.root.appendChild(layoutFragment);
+          } else {
+            if (renderedIsFragment) {
+              this.root.innerHTML = '';
+              this.root.appendChild(rendered);
+            } else {
+              this.root.innerHTML = rendered;
+            }
+          }
+        } else {
+          if (renderedIsFragment) {
+            this.root.innerHTML = '';
+            this.root.appendChild(rendered);
+          } else {
+            this.root.innerHTML = rendered;
+          }
+        }
+        this.attachEventListeners(path);
+        if (page && typeof page.mount === 'function') {
+          try { page.mount(); } catch (e) {}
+          this.currentPage = page;
+        }
+      };
+      if (templateResult instanceof Promise) {
+        templateResult.then(doRender).catch(() => {});
+      } else {
+        doRender(templateResult);
+      }
+      return;
+    }
     if (route.useLayout) {
       const layoutFn = this.findLayout(path);
       if (layoutFn) {
-        // Le layout retourne un DocumentFragment
         const layoutFragment = layoutFn();
-        
-        // Chercher l'élément <slot> dans le layout
         const contentSlot = layoutFragment.querySelector('slot');
-        
         if (contentSlot) {
-          // Insérer le contenu de la page dans le slot
           if (isFragment) {
             contentSlot.replaceWith(content);
           } else {
-            // Créer un fragment temporaire pour le HTML string
             const tempFragment = document.createElement('template');
             tempFragment.innerHTML = content;
             contentSlot.replaceWith(tempFragment.content);
           }
-        } else {
-          console.warn('Layout does not contain a <slot> element. Content will not be inserted.');
         }
-        
-        // Insérer le layout complet dans this.root
         this.root.innerHTML = '';
         this.root.appendChild(layoutFragment);
       } else {
-        // Pas de layout trouvé, afficher directement
         if (isFragment) {
           this.root.innerHTML = '';
           this.root.appendChild(content);
@@ -192,7 +217,6 @@ class Router {
         }
       }
     } else {
-      // Pas de layout, afficher directement
       if (isFragment) {
         this.root.innerHTML = '';
         this.root.appendChild(content);
@@ -200,22 +224,16 @@ class Router {
         this.root.innerHTML = content;
       }
     }
-    
-    // Attacher les event listeners après le rendu
     this.attachEventListeners(path);
   }
-  
-  // Attacher les event listeners après le rendu
+
   attachEventListeners(path) {
-    // Event listener pour le bouton de login
     const loginBtn = document.getElementById('loginBtn');
     if (loginBtn) {
       loginBtn.addEventListener('click', () => {
         this.login();
       });
     }
-    
-    // Event listener pour le bouton de logout
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
       logoutBtn.addEventListener('click', () => {
@@ -223,23 +241,26 @@ class Router {
       });
     }
   }
-  
-  // Se connecter et rediriger vers la page demandée
+
   login() {
     this.setAuth(true);
     const redirect = sessionStorage.getItem('redirectAfterLogin');
     sessionStorage.removeItem('redirectAfterLogin');
     this.navigate(redirect || '/dashboard');
   }
-  
-  // Se déconnecter
-  logout() {
-    this.setAuth(false);
-    this.navigate(this.loginPath);
-  }
-  
-  // Démarrer le routeur
-  start() {
+
+
+
+logout() {
+  // Supprime les infos locales
+  localStorage.removeItem("user");
+  localStorage.removeItem("token");
+  this.setAuth(false);
+  this.navigate(this.loginPath);
+}
+
+
+start() {
     this.handleRoute();
   }
 }

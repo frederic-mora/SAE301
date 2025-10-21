@@ -1,27 +1,20 @@
-<header>
-    <div class="bg-[#e0ddd9] py-2 flex justify-center">
-        <img src="{{logoSrc}}" alt="Logo Hermès" class="h-8" />
+<header class="w-full bg-[#d3cfca] border-b border-neutral-400">
+    <div class="relative flex items-center justify-between h-20 max-w-7xl mx-auto px-6">
+        <div class="w-32"></div>
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+            <img src="{{logoSrc}}" alt="Hermès" class="h-10 mb-1" />
+        </div>
+        <a href="/dashboard/profile" class="flex items-center text-xs text-black space-x-2 w-32 justify-end">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 00-8 0v2M12 11a4 4 0 100-8 4 4 0 000 8z" />
+            </svg>
+            <span>Compte</span>
+        </a>
     </div>
-
-    <div class="bg-[#e0ddd9] py-1">
-        <nav>
-            <ul id="header-categories" class="flex justify-center">
-                <li>
-                    <a href="/categories/Horlogerie" class="px-4 text-[#4b4b4b] hover:text-[#000000]">Horlogerie</a>
-                </li>
-
-                <li>
-                    <a href="/categories/Maroquinerie" class="px-4 text-[#4b4b4b] hover:text-[#000000]">Maroquinerie</a>
-                </li>
-
-                <li>
-                    <a href="/categories/Parfumerie" class="px-4 text-[#4b4b4b] hover:text-[#000000]">Parfumerie</a>
-                </li>
-
-                <li>
-                    <a href="/products" class="px-4 text-[#4b4b4b] hover:text-[#000000]">Voir tout les produits</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
+    <nav class="flex justify-center gap-12 py-2">
+        <a href="/products" class="text-[11px] uppercase tracking-widest text-black hover:underline">VOIR TOUS LES PRODUITS</a>
+        <a href="/categories/Maroquinerie" class="text-[11px] uppercase tracking-widest text-black hover:underline">MAROQUINERIE</a>
+        <a href="/categories/horlogerie" class="text-[11px] uppercase tracking-widest text-black hover:underline">HORLOGERIE</a>
+        <a href="/categories/parfumerie" class="text-[11px] uppercase tracking-widest text-black hover:underline">PARFUMERIE</a>
+    </nav>
 </header>
