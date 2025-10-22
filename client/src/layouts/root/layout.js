@@ -37,6 +37,6 @@ export function RootLayout() {
     let footer = FooterView.dom();
     layout.querySelector('slot[name="header"]').replaceWith(header);
     layout.querySelector('slot[name="footer"]').replaceWith(footer);
-    layout.querySelector('button[id="profileBtn"]').addEventListener("click", handlerProfile);
+    // layout.querySelector('button[id="profileBtn"]').addEventListener("click", handlerProfile);
     return layout;
 }

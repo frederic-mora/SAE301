@@ -1,4 +1,4 @@
-import { getRequest, postRequest } from '../lib/api-request.js';
+import { getRequest, postRequest,JSONpostRequest } from '../lib/api-request.js';
 
 let LoginData = {};
 
@@ -12,59 +12,79 @@ let fakeLogins = [
     }
 ];
 
-// Connexion (Login)
-LoginData.login = async function(email, password) {
+// Inscription (Create)
+LoginData.create = async function(formData) {
+    // Convertir FormData en objet JSON
     const data = {
-        action: 'login',
-        email: email,
-        password: password
+        action: 'register',
+        name: formData.get('name'),
+        surname: formData.get('surname'),
+        email: formData.get('email'),
+        password: formData.get('password')
     };
     
+    // Envoyer les données
+    const response = await JSONpostRequest('users', JSON.stringify(data));
+    return response;
+};
+
+LoginData.login = async function(data) {
     try {
-        const response = await postRequest('users', data);
+        console.log('Login avec données:', data);
+        
+        // Les données sont déjà un objet, pas besoin de FormData.get
+        const loginData = {
+            action: 'login',
+            email: data.email,
+            password: data.password
+        };
+        
+        console.log('Envoi des données:', loginData);
+        const response = await JSONpostRequest('users', JSON.stringify(loginData));
+        console.log('Réponse reçue:', response);
+        
         if (response && response.success) {
             // Stockage de l'état de connexion
             sessionStorage.setItem('isAuthenticated', 'true');
             sessionStorage.setItem('user', JSON.stringify(response.user));
             return response.user;
         }
-        throw new Error(response.error || 'Échec de la connexion');
+        return response;
     } catch (error) {
         console.error('Erreur lors de la connexion:', error);
-        return false;
+        return { success: false, error: error.message };
     }
 };
 
 // Inscription (Register)
-LoginData.register = async function(name, surname, email, password) {
-    const data = {
-        action: 'register',
-        name: name,
-        surname: surname,
-        email: email,
-        password: password
-    };
+// LoginData.register = async function(dataform) {
+//     const data = {
+//         action: 'register',
+//         name: dataform.get('name'),
+//         surname: dataform.get('surname'),
+//         email: dataform.get('email'),
+//         password: data.get('password')
+//     };
     
-    try {
-        const response = await postRequest('users', data);
-        if (response && response.success) {
-            return response.user;
-        }
-        throw new Error(response.error || 'Échec de l\'inscription');
-    } catch (error) {
-        console.error('Erreur lors de l\'inscription:', error);
-        return false;
-    }
-};
+//     try {
+//         const response = await postRequest('users', data);
+//         if (response && response.success) {
+//             return response.user;
+//         }
+//         throw new Error(response.error || 'Échec de l\'inscription');
+//     } catch (error) {
+//         console.error('Erreur lors de l\'inscription:', error);
+//         return false;
+//     }
+// };
 
 // Déconnexion
 LoginData.logout = async function() {
-    const data = {
-        action: 'logout'
-    };
-    
     try {
-        const response = await postRequest('users', data);
+        const data = {
+            action: 'logout'
+        };
+        const response = await JSONpostRequest('users', JSON.stringify(data));
         if (response && response.success) {
             // Nettoyage du stockage de session
             sessionStorage.removeItem('isAuthenticated');
@@ -124,6 +144,30 @@ LoginData.checkAuth = async function() {
         return data || false;
     } catch (error) {
         console.error('Erreur lors de la vérification de l\'authentification:', error);
+        return false;
+    }
+};
+
+// Mise à jour du profil utilisateur
+LoginData.updateProfile = async function(formData) {
+    try {
+        const data = {
+            action: 'update',
+            name: formData.get('name'),
+            surname: formData.get('surname'),
+            email: formData.get('email'),
+            password: formData.get('password'),
+            newPassword: formData.get('newPassword')
+        };
+        
+        const response = await JSONpostRequest('users', JSON.stringify(data));
+        if (response && response.success) {
+            sessionStorage.setItem('user', JSON.stringify(response.user));
+            return response.user;
+        }
+        return false;
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour du profil:', error);
         return false;
     }
 };

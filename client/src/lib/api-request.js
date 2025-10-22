@@ -83,6 +83,33 @@ let postRequest = async function(uri, data){
 }
 
 
+let JSONpostRequest = async function(uri, data){
+    // Défition des options de la requêtes
+    let options = {
+        
+        method: 'POST',
+        header: {
+            Content_Type: 'application/json' // type de données envoyées (nécessaire si upload fichier)
+        },
+        body: data
+    }
+
+    try{
+        var response = await fetch(API_URL+uri, options); // exécution (asynchrone) de la requête et attente de la réponse
+    }
+    catch(e){
+        console.error("Echec de la requête : " + e); // affichage de l'erreur dans la console
+        return false;
+    }
+    if (response.status != 200){
+        console.error("Erreur de requête : " + response.status); // affichage de l'erreur dans la console
+        return false; // si le serveur a renvoyé une erreur, on retourne false
+    }
+    let $obj = await response.json(); // extraction du json retourné par le serveur (opération asynchrone aussi)
+    return $obj; // et on retourne le tout (response.json() a déjà converti le json en objet Javscript)
+}
+
+
 
 /**
  *  deleteRequest
@@ -115,4 +142,4 @@ let patchRequest = async function(uri, data){
 }
 
 
-export {getRequest, postRequest }
+export {getRequest, postRequest, JSONpostRequest }

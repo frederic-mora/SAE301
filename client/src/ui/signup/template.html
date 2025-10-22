@@ -1,8 +1,6 @@
 
         <!-- Formulaire principal -->
-        <form class="p-4 lg:p-8" action="/signup" method="POST">
-           
-
+        <form class="p-4 lg:p-8">
             <!-- Champs du formulaire -->
             <div class="space-y-4">
                 <div class="flex flex-col lg:flex-row lg:items-center gap-2">
@@ -30,36 +28,20 @@
                 </div>
             </div>
 
-            <!-- Bouton de connexion -->
+            <!-- Bouton d'inscription -->
             <div class="mt-8 flex justify-center">
                 <button type="submit" class="bg-slate-900 text-white px-4 py-2 uppercase text-xs tracking-wider font-bold hover:bg-slate-800 transition-colors">
-                    Sign In
+                    Sign Up
                 </button>
             </div>
+
+            <!-- Message d'erreur -->
+            <div id="error-message" class="mt-4 text-red-500 text-center hidden"></div>
         </form>
 
-        <!-- Section alternatives de connexion -->
-        <section class="px-4 pb-8 text-center">
-            <p class="text-sm mb-6 underline">
-                <a href="/login" class="hover:text-slate-600">Already have an account?</a>
-            </p>
+        <!-- Lien de redirection -->
+        <p class="text-sm mb-6 text-center">
+            <a href="/login" class="hover:text-slate-600 underline" data-link>Already have an account? Log in</a>
+        </p>
 
-            <!-- Boutons de connexion sociale -->
-            <div class="space-y-4 max-w-[218px] mx-auto">
-                <button class="w-full border border-black p-2.5 flex items-center justify-center gap-5 hover:bg-gray-50 transition-colors">
-                    <img src="/images/google-icon.svg" alt="Google" class="w-4 h-4">
-                    <span class="uppercase text-xs tracking-wider font-bold">Connect with Google</span>
-                </button>
-
-                <button class="w-full border border-black p-2.5 flex items-center justify-center gap-5 hover:bg-gray-50 transition-colors">
-                    <img src="/images/facebook-icon.svg" alt="Facebook" class="w-4 h-4">
-                    <span class="uppercase text-xs tracking-wider font-bold">Connect with Facebook</span>
-                </button>
-
-                <button class="w-full border border-black p-2.5 flex items-center justify-center gap-5 hover:bg-gray-50 transition-colors">
-                    <img src="/images/apple-icon.svg" alt="Apple" class="w-4 h-4">
-                    <span class="uppercase text-xs tracking-wider font-bold">Connect with Apple</span>
-                </button>
-            </div>
-        </section>
-   
+            

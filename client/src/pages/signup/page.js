@@ -2,133 +2,70 @@ import { LoginData } from "../../data/login.js";
 import { SignupView } from "../../ui/signup/index.js";
 import { htmlToFragment } from "../../lib/utils.js";
 import template from "./template.html?raw";
-import { HeaderView } from "../../ui/header/index.js";
-
 
 let M = {
-    logins: []
+    user: null
 };
 let V = {};
 let C = {};
-// M.logins = async function(){
-//     M.logins = await LoginData.fetchAll();
-// }
 
-M.filterUser = function(email) {
-    const filteredUsers = M.logins.filter(user => user.email == email);
-    // Retourner le premier élément trouvé ou null
-    return filteredUsers.length > 0 ? filteredUsers[0] : null;
-}
-
-M.addUser = async function(name,surname, email, password){
-    await LoginData.addUser(name,surname, email, password);
-}
-M.startSession = async function(email, password){
-    let result = await LoginData.fetchSession(email, password);
-    M.startSession = result;
-}
-
-// C.handler_SignUpLogin = function(name, surname, email, password){
-//     if (M.filterUser(email)){
-//         M.addUser(name, surname, email, password);
-//     }
-// }
-
-C.handler_submit = async function(ev){
-    if (!ev.target.matches('form')){
+C.handler_submit = async function(ev) {
+    console.log('Handler submit called');
+    
+    if (!ev.target.matches('form')) {
+        console.log('Target is not a form:', ev.target);
         return;
     }
-    if (ev.target.action == "/signup"){
     ev.preventDefault();
-    let name = ev.target.querySelector('input[name="name"]').value;
-    let surname = ev.target.querySelector('input[name="surname"]').value;
-    let email = ev.target.querySelector('input[name="email"]').value;
-    let password = ev.target.querySelector('input[name="password"]').value;
+    ev.stopPropagation();
+    
+    let formdata = new FormData(ev.target);
+    formdata.append('action', 'register');
+    console.log("Données du formulaire:", Object.fromEntries(formdata));
 
-    if (M.filterUser(email)){
-        M.addUser(name, surname, email, password);
+    try {
+        const result = await LoginData.create(formdata);
+        console.log("Résultat de l'inscription:", result);
+        if (result && result.success) {
+            console.log("Inscription réussie - Redirection...");
+            // alert("Inscription réussie ! Vous allez être redirigé vers la page de connexion.");
+            window.location.href = '/login';
+        } else {
+            console.log("Inscription échouée:", result?.error || "Erreur inconnue");
+            // alert(result?.error || "L'inscription a échoué. Veuillez réessayer.");
+        }
+    } catch (error) {
+        console.error("Erreur lors de l'inscription:", error);
+        alert("Une erreur est survenue lors de l'inscription. Veuillez réessayer.");
     }
-    else {
-        M.startSession(email, password);
-    }
-}
-    if (ev.target.action == "/login"){
-        ev.preventDefault();
-        let email = ev.target.querySelector('input[name="email"]').value;
-        let password = ev.target.querySelector('input[name="password"]').value;
-        startSession = await M.startSession(email, password); 
-    }   
-     
 }
 
-
-
-
-
-
-
-
-
-// C.handler_clickOnCategory = async function(ev){
-//     console.log("Category ID:", id);
-//     if (ev.target.dataset.category !== undefined){
-//         let id = ev.target.dataset.id;
-        
-//         const signups = await M.signupsByCategory(id);
-//         const root = document.querySelector('#app');
-//         const newContent = await V.renderCat(signups);
-//         root.replaceChildren(newContent);
-//     }
-// }
-
-C.init = async function(){
-    M.signups = await LoginData.fetchAll(); 
-    return V.init( M.signups );
+C.init = async function() {
+    return V.init();
 }
 
-
-
-
-V.init = function(data){
-    let fragment = V.createPageFragment(data);
+V.init = function() {
+    let fragment = V.createPageFragment();
     V.attachEvents(fragment);
-    V.renderAmount(data);
     return fragment;
 }
-// V.renderCat = async function(data){
-    
-    
-//     let newFragment = V.createPageFragment(data);
-//     V.attachEvents(newFragment);
-//     return newFragment;
 
-// }
-
-V.createPageFragment = function( data ){
-   // Créer le fragment depuis le template
-   let pageFragment = htmlToFragment(template);
-   
-   // Générer les produits
-   let signupsDOM = SignupView.dom(data);
-   
-   // Remplacer le slot par les produits
-   pageFragment.querySelector('slot[name="signups"]').replaceWith(signupsDOM);
-   
-   return pageFragment;
-}
-
-V.attachEvents = function(pageFragment) {
-    let root = pageFragment.firstElementChild;
-    root.addEventListener("click", C.handler_clickOnSignup);
-    root.addEventListener("click", C.handler_clickOnCategory);
-    let header = HeaderView.dom();
-    header.addEventListener("click", C.handler_clickOnCategory);
+V.createPageFragment = function() {
+    let pageFragment = htmlToFragment(template);
+    let signupDOM = SignupView.dom();
+    pageFragment.replaceChildren(signupDOM);
     return pageFragment;
 }
 
-export function SignupsPage(params) {
-    console.log("SignupsPage", params);
-    return C.init(params);
+V.attachEvents = function(pageFragment) {
+    const form = pageFragment.querySelector('form');
+    console.log('Form trouvé:', form);
+     form.addEventListener('submit', C.handler_submit) ;
+     
+    return pageFragment;
 }
 
-
+export function SignupsPage() {
+    console.log("SignupsPage");
+    return C.init();
+}

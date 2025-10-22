@@ -1,57 +1,72 @@
 import { LoginData } from "../../data/login.js";
-import { SignupView } from "../../ui/signup/index.js";
+import { LoginView } from "../../ui/login/index.js";
 import { htmlToFragment } from "../../lib/utils.js";
 import template from "./template.html?raw";
-import { HeaderView } from "../../ui/header/index.js";
+import { Router } from "../../lib/router.js";
 
 
 let M = {
-    logins: []
+    user: null
 };
 let V = {};
-M.logins = async function(){
-    M.logins = await LoginData.fetchAll();
-}
-
-M.filterUser = function(email) {
-    const filteredUsers = M.logins.filter(user => user.email == email);
-    // Retourner le premier élément trouvé ou null
-    return filteredUsers.length > 0 ? filteredUsers[0] : null;
-}
-
-M.addUser = async function(name,surname, email, password){
-    await SignupData.addUser(name,surname, email, password);
-}
-M.startSession = async function(email, password){
-    let result = await LoginData.fetchSession(email, password);
-    M.startSession = result;
-}
-
-// C.handler_SignUpLogin = function(name, surname, email, password){
-//     if (M.filterUser(email)){
-//         M.addUser(name, surname, email, password);
-//     }
-// }
 let C = {};
 
+M.loginUser = async function(email, password){
+    return await LoginData.login(email, password);
+}
+
+M.checkSession = async function() {
+    const user = await LoginData.fetchCurrentUser();
+    M.user = user;
+    return user;
+}
+
+M.getCurrentUser = function() {
+    return M.user;
+}
+
 C.handler_submit = async function(ev){
+    console.log('Handler submit called');
+    
     if (!ev.target.matches('form')){
+        console.log('Target is not a form:', ev.target);
         return;
     }
-    if (ev.target.action == "/login"){
     ev.preventDefault();
-    let email = ev.target.querySelector('input[name="email"]').value;
-    let password = ev.target.querySelector('input[name="password"]').value;
+    ev.stopPropagation();
+    
+    // Récupérer le formulaire
+    let formdata = new FormData(ev.target);
+    
+    // Ajouter l'action au FormData
+    formdata.append('action', 'login');
+    
+    console.log("Données du formulaire:", Object.fromEntries(formdata));
 
-    if (M.filterUser(email)){
-        M.startSession(email, password);
+    try {
+        const result = await LoginData.login(formdata);
+        console.log("Résultat de la connexion:", result);
+        if (result) {
+            console.log("Connexion réussie - Redirection...");
+            Router.setAuth(true);
+            // Mettre à jour les informations de l'utilisateur
+            M.user = result;
+            // Rediriger vers la page d'accueil
+            // window.location.href = '/profile';
+        } else {
+            console.log("Connexion échouée:", result?.error || "Erreur inconnue");
+            // alert(result?.error || "La connexion a échoué. Veuillez réessayer.");
+        }
+    } catch (error) {
+        console.error("Erreur lors de la connexion:", error);
+        // alert("Une erreur est survenue lors de la connexion. Veuillez réessayer.");
     }
-    else {
-        
-    }
-}
-     
-}
+} 
+    // catch (error) {
+    //     console.error('Erreur lors de la connexion:', error);
+    // }
+
+
 
 
 
@@ -65,7 +80,7 @@ C.handler_submit = async function(ev){
 //     console.log("Category ID:", id);
 //     if (ev.target.dataset.category !== undefined){
 //         let id = ev.target.dataset.id;
-        
+//
 //         const signups = await M.signupsByCategory(id);
 //         const root = document.querySelector('#app');
 //         const newContent = await V.renderCat(signups);
@@ -74,17 +89,16 @@ C.handler_submit = async function(ev){
 // }
 
 C.init = async function(){
-    M.signups = await SignupData.fetchAll(); 
-    return V.init( M.signups );
+    
+        return V.init();
+    
 }
 
 
 
-
-V.init = function(data){
-    let fragment = V.createPageFragment(data);
+V.init = function(){
+    let fragment = V.createPageFragment();
     V.attachEvents(fragment);
-    V.renderAmount(data);
     return fragment;
 }
 // V.renderCat = async function(data){
@@ -96,31 +110,36 @@ V.init = function(data){
 
 // }
 
-V.createPageFragment = function( data ){
-   // Créer le fragment depuis le template
-   let pageFragment = htmlToFragment(template);
+V.createPageFragment = function(){
+   // Créer le fragment depuis le template de login directement
+   let loginDOM = LoginView.dom();
    
-   // Générer les produits
-   let signupsDOM = SignupView.dom(data);
+   // Debug
+   console.log('Fragment créé avec formulaire:', loginDOM.querySelector('form'));
    
-   // Remplacer le slot par les produits
-   pageFragment.querySelector('slot[name="signups"]').replaceWith(signupsDOM);
-   
-   return pageFragment;
+   return loginDOM;
 }
 
 V.attachEvents = function(pageFragment) {
-    let root = pageFragment.firstElementChild;
-    root.addEventListener("click", C.handler_clickOnSignup);
-    root.addEventListener("click", C.handler_clickOnCategory);
-    let header = HeaderView.dom();
-    header.addEventListener("click", C.handler_clickOnCategory);
+    // Ajouter l'écouteur d'événement pour le formulaire
+    const form = pageFragment.querySelector('form');
+    console.log('Form trouvé:', form);
+    
+    if (form) {
+        console.log('Ajout du listener submit');
+        form.addEventListener('submit', function(ev) {
+            console.log('Form submitted!');
+            return C.handler_submit(ev);
+        });
+    } else {
+        console.error('Formulaire non trouvé dans le fragment');
+    }
     return pageFragment;
 }
 
-export function LoginPage(params) {
-    console.log("SignupsPage", params);
-    return C.init(params);
+export function LoginPage() {
+    console.log("LoginPage");
+    return C.init();
 }
 
 

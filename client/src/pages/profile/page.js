@@ -36,6 +36,6 @@ V.init = function(data){
     return fragment;
 }
 export function ProfilePage(params) {
-    console.log("ProfilesPage", params);
+    console.log("ProfilePage", params);
     return C.init(params);
 }
