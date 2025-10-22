@@ -6,9 +6,27 @@ let M = {
     profiles: []
 };
 
-
-
 let C = {};
+C.handler_auth = function() {
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    if (user) {
+        // L'utilisateur est connecté
+        console.log("Utilisateur connecté :", user);
+        windows.location.href = '/profile';
+    }
+    windows.location.href = '/login';
+}
+
+// C.checkAuth = function() {
+//     return LoginData.checkAuth();
+//     const user = JSON.parse(sessionStorage.getItem('user'));
+// if (user) {
+//     // L'utilisateur est connecté
+//     return true;
+//     console.log("Utilisateur connecté :", user);
+// }
+// }
+
 
 
 C.init = async function(){

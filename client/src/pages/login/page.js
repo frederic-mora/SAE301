@@ -48,7 +48,10 @@ C.handler_submit = async function(ev){
         console.log("Résultat de la connexion:", result);
         if (result) {
             console.log("Connexion réussie - Redirection...");
-            Router.setAuth(true);
+            // Store user info in sessionStorage
+            sessionStorage.setItem('user', JSON.stringify(result));
+            // Redirect to home
+            window.location.href = '/';
             // Mettre à jour les informations de l'utilisateur
             M.user = result;
             // Rediriger vers la page d'accueil

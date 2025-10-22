@@ -87,8 +87,8 @@ V.init = function(data, gallery) {
     // Ajouter les miniatures aux deux conteneurs
     let mignatureContainer = fragment.querySelector('#migniatureContainer');
     let mignatureContainerMobile = fragment.querySelector('#migniatureContainerMobile');
-    mignatureContainer.appendChild(gallery.cloneNode(true));
-    mignatureContainerMobile.appendChild(gallery);
+    mignatureContainer.appendChild(gallery);
+    // mignatureContainerMobile.appendChild(gallery);
 
     // Initialiser la navigation mobile
     V.initMobileNavigation(fragment);

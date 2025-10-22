@@ -56,27 +56,7 @@ LoginData.login = async function(data) {
     }
 };
 
-// Inscription (Register)
-// LoginData.register = async function(dataform) {
-//     const data = {
-//         action: 'register',
-//         name: dataform.get('name'),
-//         surname: dataform.get('surname'),
-//         email: dataform.get('email'),
-//         password: data.get('password')
-//     };
-    
-//     try {
-//         const response = await postRequest('users', data);
-//         if (response && response.success) {
-//             return response.user;
-//         }
-//         throw new Error(response.error || 'Échec de l\'inscription');
-//     } catch (error) {
-//         console.error('Erreur lors de l\'inscription:', error);
-//         return false;
-//     }
-// };
+
 
 // Déconnexion
 LoginData.logout = async function() {

@@ -47,6 +47,17 @@
 body {
     font-family: var(--font-family);
 }
+
+/* Cacher la barre de défilement pour Chrome, Safari et Opera */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* Cacher la barre de défilement pour IE, Edge et Firefox */
+.scrollbar-hide {
+    -ms-overflow-style: none;  /* IE et Edge */
+    scrollbar-width: none;  /* Firefox */
+}
 @utility hoverRed {
     button:hover {
         span{

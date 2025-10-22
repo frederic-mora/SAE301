@@ -1,22 +1,47 @@
-<nav class="flex w-full h-[60px] px-8 py-4 justify-between items-center bg-white relative hoverRed">
-    <button id="menuBtn" class="lg:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1.5 z-20 m-3  ">
+<nav class="flex w-full h-[120px] justify-between items-center bg-white relative">
+    <!-- Left section - Navigation links -->
+    <div class="hidden lg:flex-1 lg:flex lg:justify-start lg:pl-[37px]">
+        <ul class="flex space-x-8 text-sm uppercase tracking-wider text-black" >
+            <li><a href="/category/0/all" data-id="1" data-category data-link class="hover:text-gray-600 transition-colors">TOUT</a></li>
+            <li><a href="/category/1/accessoires" data-id="2" data-category data-link class="hover:text-gray-600 transition-colors">ACCESSOIRES</a></li>
+            <li><a href="/category/2/bas" data-id="3" data-category data-link class="hover:text-gray-600 transition-colors">BAS</a></li>
+            <li><a href="/category/3/haut" data-id="4" data-category data-link class="hover:text-gray-600 transition-colors">HAUT</a></li>
+        </ul>
+    </div>
+
+    <!-- Center - Logo -->
+    <div class="absolute left-1/2 transform -translate-x-1/2">
+        <img src="../../../public/Design.svg" alt="EVISU" class="w-[227px] h-[46px]">
+    </div>
+
+    <!-- Right section - User Profile -->
+    <div class="flex-1 flex justify-end pr-[37px]">
+        <a id="profileBtn" href="/profile" data-link class="hover:text-gray-600 transition-colors">
+            <div class="w-10 h-10 rounded-full border-2 border-black flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
+                    <circle cx="12" cy="7" r="4" stroke="black" stroke-width="2" fill="none"/>
+                    <path d="M5 19v-2a4 4 0 014-4h6a4 4 0 014 4v2" stroke="black" stroke-width="2" fill="none"/>
+                </svg>
+            </div>
+        </a>
+    </div>
+
+    <!-- Menu mobile -->
+    <button id="menuBtn" class="lg:hidden absolute left-4 flex flex-col justify-center items-center w-8 h-8 space-y-1.5 z-20">
         <span class="w-6 h-0.5 bg-black transition-all duration-300"></span>
         <span class="w-6 h-0.5 bg-black transition-all duration-300"></span>
         <span class="w-6 h-0.5 bg-black transition-all duration-300"></span>
     </button>
-    
-    <div class="flex justify-between items-center w-full">
-        <ul id="menuItems" class="fixed lg:relative top-0 left-0  h-screen lg:h-auto bg-white lg:bg-transparent flex flex-col lg:flex-row justify-center space-y-8 lg:space-y-0 lg:space-x-8 text-black text-sm uppercase tracking-wider transform translate-x-[-100%] lg:translate-x-0 transition-transform duration-300 z-10 hover:cursor-pointer p-10">
-            <li><a href="/category/0/all" data-id="1" data-category data-link class="hover:text-gray-600 transition-colors">ALL</a></li>
-            <li><a href="/category/1/accessoires" data-id="2" data-category data-link class="hover:text-gray-600 transition-colors">ACCESSORY</a></li>
-            <li><a href="/category/2/bas" data-id="3" data-category data-link class="hover:text-gray-600 transition-colors">BOTTOM</a></li>
-            <li><a href="/category/3/haut" data-id="4" data-category data-link class="hover:text-gray-600 transition-colors">TOP</a></li>
+
+    <!-- Mobile menu -->
+    <div id="menuItems" class="lg:hidden fixed inset-0 bg-white transform translate-x-[-100%] transition-transform duration-300 z-10">
+        <ul class="flex flex-col items-center justify-center h-full space-y-8 text-black text-sm uppercase tracking-wider">
+            <li><a href="/category/0/all" data-id="1" data-category data-link class="hover:text-gray-600 transition-colors">TOUT</a></li>
+            <li><a href="/category/1/accessoires" data-id="2" data-category data-link class="hover:text-gray-600 transition-colors">ACCESSOIRES</a></li>
+            <li><a href="/category/2/bas" data-id="3" data-category data-link class="hover:text-gray-600 transition-colors">BAS</a></li>
+            <li><a href="/category/3/haut" data-id="4" data-category data-link class="hover:text-gray-600 transition-colors">HAUT</a></li>
         </ul>
-       
     </div>
-     <div class="w-[120px] h-[24px] flex items-center justify-center relative -left-1/2 -right-1/2 z-20">
-            <img src="../../../public/Design.svg" alt="EVISU" class="h-full">
-        </div>
 </nav>
 <script>
     
