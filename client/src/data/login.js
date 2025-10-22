@@ -39,8 +39,9 @@ LoginData.login = async function(data) {
             password: data.password
         };
         
+        
         console.log('Envoi des données:', loginData);
-        const response = await JSONpostRequest('users', JSON.stringify(loginData));
+        const response = await postRequest('users', JSON.stringify(loginData));
         console.log('Réponse reçue:', response);
         
         if (response && response.success) {

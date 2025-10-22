@@ -1,0 +1,100 @@
+
+<div class="bg-white rounded-lg shadow w-full">
+    <div class="p-10">
+        <h2 class="text-lg font-medium text-[#0F172A] mb-8">Modifier mes Informations personnelles</h2>
+        
+        <form method="post">
+            <fieldset class="space-y-6">
+                <legend class="sr-only">Informations personnelles</legend>
+                
+                <!-- Champ Name -->
+                <div class="flex items-center">
+                    <label for="name" class="w-[180px] text-xs uppercase tracking-[0.91px] text-right font-medium text-[#0F172A]">
+                        Name
+                    </label>
+                    <div class="flex-1 ml-4">
+                        <input type="text" 
+                               id="name" 
+                               name="name" 
+                               value="{{name}}" 
+                               class="w-full h-12 px-4 border border-[#E2E8F0] text-sm text-[#0F172A] focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none"
+                               required>
+                    </div>
+                </div>
+
+                <!-- Champ Surname -->
+                <div class="flex items-center">
+                    <label for="surname" class="w-[180px] text-xs uppercase tracking-[0.91px] text-right font-medium text-[#0F172A]">
+                        Surname
+                    </label>
+                    <div class="flex-1 ml-4">
+                        <input type="text" 
+                               id="surname" 
+                               name="surname" 
+                               value="{{surname}}" 
+                               class="w-full h-12 px-4 border border-[#E2E8F0] text-sm text-[#0F172A] focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none"
+                               required>
+                    </div>
+                </div>
+
+                <!-- Champ Email -->
+                <div class="flex items-center">
+                    <label for="email" class="w-[180px] text-xs uppercase tracking-[0.91px] text-right font-medium text-[#0F172A]">
+                        Email
+                    </label>
+                    <div class="flex-1 ml-4">
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               value="{{email}}" 
+                               class="w-full h-12 px-4 border border-[#E2E8F0] text-sm text-[#0F172A] focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none"
+                               required>
+                    </div>
+                </div>
+
+                <!-- Champ Password -->
+                <div class="flex items-center">
+                    <label for="password" class="w-[180px] text-xs uppercase tracking-[0.91px] text-right font-medium text-[#0F172A]">
+                        Password
+                    </label>
+                    <div class="flex-1 ml-4">
+                        <input type="password" 
+                               id="password" 
+                               name="password" 
+                               placeholder="••••••••" 
+                               class="w-full h-12 px-4 border border-[#E2E8F0] text-sm text-[#0F172A] focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none">
+                    </div>
+                </div>
+
+                <!-- Champ New Password -->
+                <div class="flex items-center">
+                    <label for="newPassword" class="w-[180px] text-xs uppercase tracking-[0.91px] text-right font-medium text-[#0F172A]">
+                        New Password
+                    </label>
+                    <div class="flex-1 ml-4">
+                        <input type="password" 
+                               id="newPassword" 
+                               name="newPassword" 
+                               placeholder="••••••••" 
+                               class="w-full h-12 px-4 border border-[#E2E8F0] text-sm text-[#0F172A] focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none">
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- Boutons d'action -->
+            <div class="flex justify-end items-center gap-4 mt-8">
+                <button id="logoutBtn" type="button" 
+                        class="h-12 px-8 text-xs uppercase tracking-[0.91px] font-bold border border-[#0F172A] text-[#0F172A] hover:bg-gray-50 transition-colors">
+                    Disconnect
+                </button>
+                <button type="submit" 
+                        class="h-12 px-8 text-xs uppercase tracking-[0.91px] font-bold bg-[#0F172A] text-white hover:bg-gray-800 transition-colors">
+                    Save changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+        </div>
+    </div>
+

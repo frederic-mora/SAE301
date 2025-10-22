@@ -11,9 +11,9 @@ let M = {
 let V = {};
 let C = {};
 
-M.loginUser = async function(email, password){
-    return await LoginData.login(email, password);
-}
+// M.loginUser = async function(email, password){
+//     return await LoginData.login(email, password);
+// }
 
 M.checkSession = async function() {
     const user = await LoginData.fetchCurrentUser();
@@ -40,18 +40,21 @@ C.handler_submit = async function(ev){
     
     // Ajouter l'action au FormData
     formdata.append('action', 'login');
-    
+    formdata.append('email', ev.target.querySelector('input[name="email"]').value);
+    formdata.append('password', ev.target.querySelector('input[name="password"]').value);
+
     console.log("Données du formulaire:", Object.fromEntries(formdata));
 
     try {
-        const result = await LoginData.login(formdata);
+        const result = await LoginData.login(Object.fromEntries(formdata));
         console.log("Résultat de la connexion:", result);
-        if (result) {
+        if (result.success==true) {
             console.log("Connexion réussie - Redirection...");
             // Store user info in sessionStorage
             sessionStorage.setItem('user', JSON.stringify(result));
+            Router.setAuth=true;
             // Redirect to home
-            window.location.href = '/';
+            window.location.href = '/'; 
             // Mettre à jour les informations de l'utilisateur
             M.user = result;
             // Rediriger vers la page d'accueil
@@ -65,21 +68,32 @@ C.handler_submit = async function(ev){
         // alert("Une erreur est survenue lors de la connexion. Veuillez réessayer.");
     }
 } 
-    // catch (error) {
-    //     console.error('Erreur lors de la connexion:', error);
-    // }
 
+C.handler_profileClick = async function(ev){
+    console.log("Profile click detected");
+    ev.preventDefault();
+    ev.stopPropagation();
+    UserInfo = sessionStorage.getItem('user');
 
+    const user = LoginData.getCurrentUser();
+    if (user) {
+        console.log("Utilisateur connecté :", user);
+        window.location.href = '/profile';
+    } else {
+        console.log("Utilisateur non connecté");
+        window.location.href = '/login';
+    }
+}
+let UserInfo = sessionStorage.getItem('user');
+console.log("UserInfo au chargement de la page :", UserInfo);
 
+// // Connexion
+// if (UserInfo) {
+//     console.log("Utilisateur déjà connecté :", UserInfo);
+//     // Rediriger vers la page de profil
+//     window.location.href = '/profile';
+// }
 
-
-
-
-
-
-
-
-// C.handler_clickOnCategory = async function(ev){
 //     console.log("Category ID:", id);
 //     if (ev.target.dataset.category !== undefined){
 //         let id = ev.target.dataset.id;

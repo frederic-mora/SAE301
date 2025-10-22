@@ -1,20 +1,33 @@
 import { ProfileView } from "../../ui/profile/index.js";
 import { LoginData } from "../../data/login.js";
 import template from "./template.html?raw";
+import { Router } from "../../lib/router.js";
 
 let M = {
     profiles: []
 };
 
 let C = {};
-C.handler_auth = function() {
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (user) {
-        // L'utilisateur est connecté
-        console.log("Utilisateur connecté :", user);
-        windows.location.href = '/profile';
+C.handler_auth = async function() {
+    if (Router.setAuth===true) {
+        // user= LoginData.fetchCurrentUser();
+        user = JSON.parse(sessionStorage.getItem('user'));
+        if (user) {
+            console.log("Utilisateur connecté :", user);
+            window.location.href = '/profile';
+            return;
+        }
     }
-    windows.location.href = '/login';
+    // const auth = await LoginData.checkAuth();
+    // if (auth.success===true) {
+    //     const user = JSON.parse(sessionStorage.getItem('user'));
+    //     if (user) {
+    //         // L'utilisateur est connecté
+    //         console.log("Utilisateur connecté :", user);
+    //         window.location.href = '/profile';
+    //     }
+    // }
+    window.location.href = '/login';
 }
 
 // C.checkAuth = function() {
@@ -31,7 +44,9 @@ C.handler_auth = function() {
 
 C.init = async function(){
     M.profiles = await LoginData.fetchAll(); 
-    return V.init( M.profiles );
+    userInfo = sessionStorage.getItem('user');
+    console.log("UserInfo dans ProfilePage init :", userInfo);
+    return V.init( userInfo );
 }
 let V = {};
 V.createPageFragment = function( data ){
@@ -50,10 +65,10 @@ V.createPageFragment = function( data ){
 V.init = function(data){
     let fragment = V.createPageFragment(data);
     V.attachEvents(fragment);
-    V.renderAmount(data);
+    // V.renderAmount(data);
     return fragment;
 }
-export function ProfilePage(params) {
-    console.log("ProfilePage", params);
-    return C.init(params);
+export function ProfilePage() {
+    console.log("ProfilePage");
+    return C.init();
 }
