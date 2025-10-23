@@ -8,6 +8,7 @@ import { CategoriesPage } from "./pages/categories/page.js";
 import { LoginPage } from "./pages/login/page.js";
 import { RegisterPage } from "./pages/register/page.js";
 import {AccountPage} from "./pages/account/page.js";
+import { CartPage } from "./pages/cart/page.js";
 
 import { RootLayout } from "./layouts/root/layout.js";
 import { The404Page } from "./pages/404/page.js";
@@ -29,6 +30,8 @@ router.addRoute("/auth", LoginPage);
 router.addRoute("/auth/login", LoginPage);
 router.addRoute("/auth/register", RegisterPage);
 router.addRoute("/dashboard/profile", AccountPage);
+
+router.addRoute("/cart", CartPage);
 
 router.addRoute("*", The404Page);
 

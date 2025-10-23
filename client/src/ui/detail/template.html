@@ -1,24 +1,24 @@
-<!-- client/src/ui/detail/template.html -->
+<!-- html -->
 <section class="flex justify-center">
-<article class="mx-auto max-w-4xl  bg-[#f7f5ef] p-6 m-2 flex flex-col justify-center
-  md:flex-row md:p-12 md:m-6 md:gap-12">
-  <div class="flex flex-col items-center w-full md:w-1/2">
-    <div class="flex gap-2">
-      <slot name="image-galerie"></slot>
+  <article class="mx-auto max-w-4xl bg-[#f7f5ef] p-6 m-2 flex flex-col justify-center
+    md:flex-row md:p-12 md:m-6 md:gap-12">
+    <div class="flex flex-col items-center w-full md:w-1/2">
+      <div class="flex gap-2">
+        <slot name="image-galerie"></slot>
+      </div>
     </div>
-  </div>
 
-  <div class="flex flex-col justify-center w-full md:w-1/2">
-    <h1 class="mb-2 text-xl font-normal text-gray-900 md:mb-4 md:text-2xl">{{name}}</h1>
-    <div class="mb-1 text-lg text-gray-700 md:mb-2 md:text-xl">{{price}} €</div>
-    <p class="mb-4 text-sm text-gray-700 leading-relaxed md:mb-8 md:text-base">{{description}}</p>
-    <button
-            data-buy="{{id}}"
-            class="w-full bg-gray-700 text-white text-base font-normal py-3 rounded-none transition hover:bg-gray-900
-        md:text-lg md:py-4"
-    >
-      Ajouter au panier
-    </button>
-  </div>
-</article>
+    <div class="flex flex-col justify-center w-full md:w-1/2">
+      <h1 class="mb-2 text-xl font-normal text-gray-900 md:mb-4 md:text-2xl">{{name}}</h1>
+      <div class="mb-1 text-lg text-gray-700 md:mb-2 md:text-xl">{{price}} €</div>
+      <p class="mb-4 text-sm text-gray-700 leading-relaxed md:mb-8 md:text-base">{{description}}</p>
+
+      <button
+              data-buy="{{id}}"
+              class="w-full bg-gray-700 text-white text-base font-normal py-3 rounded-none transition hover:bg-gray-900 md:text-lg md:py-4"
+      >
+        Ajouter au panier
+      </button>
+    </div>
+  </article>
 </section>
