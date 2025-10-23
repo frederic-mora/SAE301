@@ -16,8 +16,31 @@
     </div>
 
     <!-- Right section - User Profile -->
-    <div class="flex-1 flex justify-end pr-[37px]">
-        <a id="profileBtn" href="/profile" data-link class="hover:text-gray-600 transition-colors">
+    <div class="flex-1 flex justify-end pr-[37px] relative">
+        <!-- État authentifié : Bouton avec dropdown -->
+        <div id="authState" class="hidden">
+            <button id="profileBtn" class="hover:text-gray-600 transition-colors focus:outline-none">
+                <div class="w-10 h-10 rounded-full border-2 border-black flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
+                        <circle cx="12" cy="7" r="4" stroke="black" stroke-width="2" fill="none"/>
+                        <path d="M5 19v-2a4 4 0 014-4h6a4 4 0 014 4v2" stroke="black" stroke-width="2" fill="none"/>
+                    </svg>
+                </div>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div id="profileDropdown" class="absolute top-full right-0 mt-2 w-48 bg-white border border-black rounded shadow-lg hidden z-50">
+                <a href="/profile" data-link class="block px-4 py-2 text-sm text-black hover:bg-gray-100 transition-colors border-b border-gray-200">
+                    MON PROFIL
+                </a>
+                <button id="logoutDropdownBtn" class="w-full text-left px-4 py-2 text-sm text-black hover:bg-gray-100 transition-colors">
+                    DÉCONNEXION
+                </button>
+            </div>
+        </div>
+
+        <!-- État non-authentifié : Lien vers login -->
+        <a id="loginLink" href="/login" data-link class="hidden hover:text-gray-600 transition-colors">
             <div class="w-10 h-10 rounded-full border-2 border-black flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
                     <circle cx="12" cy="7" r="4" stroke="black" stroke-width="2" fill="none"/>

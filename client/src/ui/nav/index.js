@@ -1,4 +1,5 @@
 import { htmlToFragment } from "../../lib/utils.js";
+import { LoginData } from "../../data/login.js";
 import template from "./template.html?raw";
 
 // NavView est un composant statique
@@ -11,10 +12,54 @@ let NavView = {
 
   dom: function () {
     const fragment = htmlToFragment(template);
+    
+    // Gestion du menu mobile
     const menuBtn = fragment.querySelector('#menuBtn');
     if (menuBtn) {
       menuBtn.addEventListener('click', C.handleMenuToggle);
     }
+
+    // Vérifier l'état d'authentification
+    const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
+    const authState = fragment.querySelector('#authState');
+    const loginLink = fragment.querySelector('#loginLink');
+
+    // Afficher le bon état selon l'authentification
+    if (isAuthenticated && authState && loginLink) {
+      authState.classList.remove('hidden');
+      loginLink.classList.add('hidden');
+    } else if (!isAuthenticated && authState && loginLink) {
+      authState.classList.add('hidden');
+      loginLink.classList.remove('hidden');
+    }
+
+    // Gestion du dropdown profil (seulement si authentifié)
+    const profileBtn = fragment.querySelector('#profileBtn');
+    const profileDropdown = fragment.querySelector('#profileDropdown');
+    const logoutBtn = fragment.querySelector('#logoutDropdownBtn');
+
+    if (profileBtn && isAuthenticated) {
+      profileBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        profileDropdown.classList.toggle('hidden');
+      });
+    }
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        await C.handleLogout();
+      });
+    }
+
+    // Fermer le dropdown quand on clique ailleurs
+    document.addEventListener('click', (ev) => {
+      if (profileDropdown && !profileDropdown.contains(ev.target) && !profileBtn.contains(ev.target)) {
+        profileDropdown.classList.add('hidden');
+      }
+    });
+
     return fragment;
   }
 };
@@ -45,8 +90,27 @@ C.handleMenuToggle = function (ev) {
   }
 };
 
+C.handleLogout = async function() {
+  console.log('Logout handler called');
+  
+  try {
+    // Appeler le logout serveur si tu veux invalider la session
+    await LoginData.logout();
+  } catch (error) {
+    console.error('Erreur lors de la déconnexion serveur:', error);
+  }
 
-  navigation.addEventListener("click", C.attachEvents);
+  // Nettoyage local
+  sessionStorage.removeItem('user');
+  sessionStorage.setItem('isAuthenticated', 'false');
 
+  // Mettre à jour le router si l'instance est exposée
+  if (window.router && typeof window.router.setAuth === 'function') {
+    window.router.setAuth(false);
+  }
+
+  // Redirection vers login
+  window.location.href = '/login';
+};
 
 export { NavView };

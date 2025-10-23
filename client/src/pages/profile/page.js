@@ -14,27 +14,21 @@ M.getCurrentUser = async function(id) {
 }
 
 let C = {};
-// C.handler_auth = async function() {
-//     if (Router.setAuth===true) {
-//         authStatus =sessionStorage.getItem('auth');
-//         if (authStatus==='true') {
-//             console.log("Utilisateur déjà authentifié.");
-//             let id = JSON.parse(sessionStorage.getItem('user'));
-//             let user= M.getCurrentUser(id);
+C.handler_auth = async function() {
+    if (Router.setAuth===true) {
+        authStatus =sessionStorage.getItem('isAuthenticated');
+        if (authStatus==='true') {
+            console.log("Utilisateur déjà authentifié.");
+            // let id = JSON.parse(sessionStorage.getItem('user'));
+            // let user= M.getCurrentUser(id);
 
-//             window.location.href = '/profile';
-//             return user;
-//         }
-//         // user= LoginData.fetchCurrentUser();
-//         // user = JSON.parse(sessionStorage.getItem('user'));
-//         // if (user) {
-//         //     console.log("Utilisateur connecté :", user);
-//         //     window.location.href = '/profile';
-//         //     return;
-//         // }
-//     }
-    
-// }
+            window.location.href = '/profile';
+            // return user;
+        }
+        
+    }
+ 
+}
 
 // C.checkAuth = function() {
 //     return LoginData.checkAuth();
@@ -46,16 +40,15 @@ let C = {};
 // }
 // }
 
-C.handler_logout = async function(ev) {
-  // Trouve le bouton logout qui englobe l'élément cliqué
-  console.log('Handler logout called');
-  const logoutBtn = ev.target.closest('button#logoutButton');
-  if (!logoutBtn) return; // ce clic n'est pas sur le bouton logout
-
-  ev.preventDefault();
-LoginData.logout();
-  // Si tu veux appeler l'API de logout côté serveur :
-  // await LoginData.logout();
+C.handler_logout = async function() {
+  console.log('Logout handler called');
+  
+  try {
+    // Appeler le logout serveur si tu veux invalider la session
+    await LoginData.logout();
+  } catch (error) {
+    console.error('Erreur lors de la déconnexion serveur:', error);
+  }
 
   // Nettoyage local
   sessionStorage.removeItem('user');
@@ -64,20 +57,39 @@ LoginData.logout();
   // Mettre à jour le router si l'instance est exposée
   if (window.router && typeof window.router.setAuth === 'function') {
     window.router.setAuth(false);
-    Router.setAuth(false);
   }
 
-  // Redirection
+  // Redirection vers login
   window.location.href = '/login';
-}
+};
 C.handler_updateProfile = async function(ev) {
-    if (ev.tagName !== 'BUTTON' && !ev.target.matches('button[id="updateButton"]')) return; 
+    console.log('Handler update profile called');
+    if (ev.target.id !== 'updateButton') return; 
     ev.preventDefault();
+    
     let form = ev.target.closest('form');
+    if (!form) {
+        console.error('Form not found');
+        return;
+    }
+    
     let formData = new FormData(form);
     formData.append('action', 'updateProfile');
-    await LoginData.updateProfile(formData);
-    console.log('Handler update profile called');
+    
+    try {
+        const result = await LoginData.updateProfile(formData);
+        if (result && result.id) {
+            console.log('Profil mis à jour avec succès:', result);
+            // Optionnel: afficher un message de succès
+            alert('Profil mis à jour avec succès');
+        } else {
+            console.error('Erreur lors de la mise à jour:', result);
+            alert('Erreur lors de la mise à jour du profil');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Une erreur s\'est produite');
+    }
 }
 
 C.init = async function(){
@@ -106,12 +118,19 @@ V.createPageFragment = function( data ){
    
    return pageFragment;
 }
-V.attachEvents = function( pageFragment ){
+V.attachEvents = function(pageFragment) {
+    let logoutBtn = pageFragment.querySelector('#logoutBtnProfile');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', C.handler_logout);
+    }
+    let updateBtn = pageFragment.querySelector('#updateButton');
+    if (updateBtn) {
+      updateBtn.addEventListener('click', C.handler_updateProfile);
+    }
 
-    pageFragment.addEventListener('submit', C.handler_logout);
-    pageFragment.addEventListener('submit', C.handler_updateProfile);
-    // const profileIcon = fragment.querySelector('#profileBtn');
-    // profileIcon.addEventListener('click', C.handler_auth);
+    // Note: le bouton profil se trouve dans la navbar (nav/index.js)
+    // pas dans cette page, donc pas besoin de l'attacher ici
+
     return pageFragment;
 }
 

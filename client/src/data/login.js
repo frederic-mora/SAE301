@@ -139,8 +139,11 @@ LoginData.updateProfile = async function(formData) {
         const response = await JSONpostRequest('users', JSON.stringify(data));
         if (response && response.success) {
             const user = response.user;
-            sessionStorage.setItem('user', user);
-            Router.isAuthenticated = true;
+            sessionStorage.setItem('user', JSON.stringify(user));
+            // Mettre à jour l'état du router si disponible
+            if (window.router && typeof window.router.setAuth === 'function') {
+                window.router.setAuth(true);
+            }
             return user;
         }
         return false;

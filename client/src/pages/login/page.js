@@ -48,23 +48,48 @@ C.handler_submit = async function(ev){
     try {
         const result = await LoginData.login(Object.fromEntries(formdata));
         console.log("Résultat de la connexion:", result);
-        if (result.success==true) {
-            console.log("Connexion réussie - Redirection...");
-            // Store user info in sessionStorage
+        const errorDiv = document.querySelector('#error-message');
+        
+        // Vérifier si la connexion a réussi
+        // LoginData.login retourne l'utilisateur en cas de succès ou {success:false, error} en cas d'échec
+        if (result && result.id) {
+            // Succès : result est l'utilisateur (contient id, name, etc)
+            console.log("Connexion réussie !");
+            sessionStorage.setItem('isAuthenticated', 'true');
             sessionStorage.setItem('user', JSON.stringify(result));
-            window.router.setAuth(true);
-
-            window.router.login(); 
-            // Redirect to home
-            window.location.href = '/'; 
-            // Mettre à jour les informations de l'utilisateur
-            M.user = result.user;
+            
+            // Mettre à jour le router
+            if (window.router && typeof window.router.setAuth === 'function') {
+                window.router.setAuth(true);
+            }
+            
+            // Masquer le message d'erreur
+            if (errorDiv) errorDiv.classList.add('hidden');
+            
             // Rediriger vers la page d'accueil
-            // window.location.href = '/profile';
-        } 
+            window.location.href = '/';
+        } else if (result && result.success === false) {
+            // Échec : result contient {success: false, error: "..."}
+            console.log("Connexion échouée:", result.error || "Erreur inconnue");
+            if (errorDiv) {
+                errorDiv.textContent = result.error || "Erreur inconnue";
+                errorDiv.classList.remove('hidden');
+            }
+        } else {
+            // Format inattendu
+            console.log("Format de réponse inattendu:", result);
+            if (errorDiv) {
+                errorDiv.textContent = "Erreur lors de la connexion";
+                errorDiv.classList.remove('hidden');
+            }
+        }
     } catch (error) {
         console.error("Erreur lors de la connexion:", error);
-        // alert("Une erreur est survenue lors de la connexion. Veuillez réessayer.");
+        const errorDiv = document.querySelector('#error-message');
+        if (errorDiv) {
+            errorDiv.textContent = "Erreur lors de la connexion";
+            errorDiv.classList.remove('hidden');
+        }
     }
 } 
 
