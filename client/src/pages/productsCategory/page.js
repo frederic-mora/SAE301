@@ -12,9 +12,13 @@ let M = {
 
 };
 
+M.products = async function() {
+    await ProductData.fetchAll();
+};
+
 // M.productsByCategory = async function(categoryId){
 //     if (categoryId === 1){
-//         M.products = await ProductData.fetchAll();
+//         
 //     } else {
 //         M.products = await ProductData.fetchByCategory(categoryId);
 //     }
@@ -48,12 +52,13 @@ C.init = async function(param){
     M.products = await ProductData.fetchAll();
         let catList = [];
         
-        if (param.id === "0"){
-            
+        // if (param.id === "0"){
+        //     catList = M.products;
            
-        }
-        else if (param.id !== "0"){
-           for (let elt of M.products){
+        // }
+        if (param.id !== "0"){
+           for (let i=1; i < M.products.length; i++){
+            let elt = M.products[i];
             if (elt.category.toString() == param.id){
               catList.push(elt);
             }
@@ -68,16 +73,15 @@ C.init = async function(param){
 
 
 let V = {};
-V.renderAmount=function(data){
-    let html= htmlToFragment(template);
-    html.querySelector('#counter').textContent = ` ${data.length} ITEMS`;
-    return html;
+V.renderAmount = function(pageFragment, data) {
+  const counter = pageFragment.querySelector('#counter');
+  if (counter) counter.textContent = `${data.length} ITEMS`;
 }
 
 V.init = function(data){
     let fragment = V.createPageFragment(data);
     V.attachEvents(fragment);
-    V.renderAmount(data);
+    V.renderAmount(fragment, data);
     return fragment;
 }
 // V.renderCat = async function(data){

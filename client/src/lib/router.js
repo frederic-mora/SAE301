@@ -229,7 +229,7 @@ class Router {
     this.setAuth(true);
     const redirect = sessionStorage.getItem('redirectAfterLogin');
     sessionStorage.removeItem('redirectAfterLogin');
-    this.navigate(redirect || '/dashboard');
+    this.navigate(redirect || '/profile');
   }
   
   // Se déconnecter

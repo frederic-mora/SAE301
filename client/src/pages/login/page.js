@@ -52,38 +52,42 @@ C.handler_submit = async function(ev){
             console.log("Connexion réussie - Redirection...");
             // Store user info in sessionStorage
             sessionStorage.setItem('user', JSON.stringify(result));
-            Router.setAuth=true;
+            window.router.setAuth(true);
+
+            window.router.login(); 
             // Redirect to home
             window.location.href = '/'; 
             // Mettre à jour les informations de l'utilisateur
-            M.user = result;
+            M.user = result.user;
             // Rediriger vers la page d'accueil
             // window.location.href = '/profile';
-        } else {
-            console.log("Connexion échouée:", result?.error || "Erreur inconnue");
-            // alert(result?.error || "La connexion a échoué. Veuillez réessayer.");
-        }
+        } 
     } catch (error) {
         console.error("Erreur lors de la connexion:", error);
         // alert("Une erreur est survenue lors de la connexion. Veuillez réessayer.");
     }
 } 
 
-C.handler_profileClick = async function(ev){
-    console.log("Profile click detected");
-    ev.preventDefault();
-    ev.stopPropagation();
-    UserInfo = sessionStorage.getItem('user');
+// C.handler_profileClick = async function(ev){
+//     console.log("Profile click detected");
+//     ev.preventDefault();
+//     ev.stopPropagation();
+//     UserInfo = sessionStorage.getItem('user');
 
-    const user = LoginData.getCurrentUser();
-    if (user) {
-        console.log("Utilisateur connecté :", user);
-        window.location.href = '/profile';
-    } else {
-        console.log("Utilisateur non connecté");
-        window.location.href = '/login';
-    }
-}
+//         const raw = sessionStorage.getItem('user');
+//     const user = raw ? JSON.parse(raw) : null;
+//     if (user) {
+//       console.log("Utilisateur connecté :", user);
+//       const btn = document.querySelector('#loginBtn');
+//       if (btn) btn.href = '/profile';
+//       window.location.href = '/profile/';
+//     } else {
+//       console.log("Utilisateur non connecté");
+//       const btn = document.querySelector('#loginBtn');
+//       if (btn) btn.href = '/login';
+//       window.location.href = '/login';
+//     }
+// }
 let UserInfo = sessionStorage.getItem('user');
 console.log("UserInfo au chargement de la page :", UserInfo);
 

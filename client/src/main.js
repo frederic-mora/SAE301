@@ -27,11 +27,11 @@ router.addRoute("/category/:id/:category", ProductsCategoryPage);
 
 router.addRoute("/login", LoginPage);
 router.addRoute("/signup", SignupsPage);
-router.addRoute("/profile", ProfilePage, { requireAuth: true });
+router.addRoute("/profile", ProfilePage,{ authRequired: true });
 router.addRoute("/success", SuccessPage);
 
 router.addRoute("*", The404Page);
-
+// window.router = router;
 // Démarrer le routeur
 router.start();
 

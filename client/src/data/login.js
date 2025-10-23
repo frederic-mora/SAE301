@@ -38,7 +38,7 @@ LoginData.login = async function(data) {
             email: data.email,
             password: data.password
         };
-        
+
         
         console.log('Envoi des données:', loginData);
         const response = await postRequest('users', JSON.stringify(loginData));
@@ -97,14 +97,9 @@ LoginData.regenerateSession = async function() {
 };
 
 // Récupération des informations de l'utilisateur connecté
-LoginData.fetchCurrentUser = async function() {
-    try {
-        const data = await getRequest('users?currentUser');
-        return data?.user || false;
-    } catch (error) {
-        console.error('Erreur lors de la récupération de l\'utilisateur:', error);
-        return false;
-    }
+LoginData.getCurrentUser = function() {
+  const raw = sessionStorage.getItem('user');
+  return raw ? JSON.parse(raw) : null;
 };
 
 // Récupération d'un utilisateur par ID
@@ -143,8 +138,10 @@ LoginData.updateProfile = async function(formData) {
         
         const response = await JSONpostRequest('users', JSON.stringify(data));
         if (response && response.success) {
-            sessionStorage.setItem('user', JSON.stringify(response.user));
-            return response.user;
+            const user = response.user;
+            sessionStorage.setItem('user', user);
+            Router.isAuthenticated = true;
+            return user;
         }
         return false;
     } catch (error) {
