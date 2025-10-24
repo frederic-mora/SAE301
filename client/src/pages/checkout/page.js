@@ -4,6 +4,7 @@ import { cartModule } from "../../data/cart.js";
 import { createOrder } from "../../data/order.js";
 
 // --- Fonction pour vérifier l'utilisateur ---
+// (Conservée ici, mais son appel sera commenté plus bas)
 function decodeJwtPayload(token) {
     try {
         const parts = token.split(".");
@@ -21,13 +22,7 @@ function getCurrentUser() {
             const parsed = JSON.parse(userJson);
             return parsed && typeof parsed === "object" ? parsed : null;
         }
-        const token = localStorage.getItem("token");
-        if (token) {
-            const payload = decodeJwtPayload(token);
-            if (payload && payload.email) {
-                return { email: payload.email, ...payload };
-            }
-        }
+        // Pas de fallback JWT ici, on se fie à localStorage
     } catch (e) { }
     return null;
 }
@@ -66,20 +61,26 @@ C.handler_confirmCheckout = async function(ev) {
         const savedOrder = await createOrder({ items: cartItems, total: total });
 
         // 2. Vérifier si la sauvegarde a réussi
+        // (Note: Ceci échouera si le backend a encore la vérification de session)
         if (!savedOrder || !savedOrder.numero_commande) {
-            throw new Error("La sauvegarde de la commande a échoué.");
+            // Essayons d'obtenir un message d'erreur plus précis de l'API
+            let errorMessage = "La sauvegarde de la commande a échoué.";
+            if (savedOrder && savedOrder.error) {
+                errorMessage = savedOrder.error;
+            }
+            throw new Error(errorMessage);
         }
 
-        // 3. Vider le panier (Critère 5)
+        // 3. Vider le panier
         cartModule.saveCart({ items: [] });
 
-        // 4. Rediriger vers la confirmation (Critère 6)
+        // 4. Rediriger vers la confirmation
         window.location.href = `/confirmation?order_id=${savedOrder.numero_commande}`;
 
     } catch (err) {
         console.error('[CheckoutPage] C.handler_confirmCheckout error', err);
         if (errorEl) {
-            errorEl.textContent = err.message || 'Une erreur est survenue.';
+            errorEl.textContent = err.message || 'Une erreur est survenue lors de la tentative de commande.';
             errorEl.classList.remove('hidden');
         }
         btn.disabled = false;
@@ -89,16 +90,20 @@ C.handler_confirmCheckout = async function(ev) {
 
 C.init = async function() {
     // 1. Vérifier l'authentification (Critère 1)
+    // --- MODIFICATION : Vérification commentée ---
+    /*
     if (!getCurrentUser()) {
         sessionStorage.setItem('redirectAfterLogin', '/checkout');
         window.location.href = '/auth/login';
         return htmlToFragment("<div>Redirection...</div>");
     }
+    */
+    // --- FIN MODIFICATION ---
 
     // 2. Vérifier que le panier n'est pas vide
     const cartItems = M.getCart();
     if (cartItems.length === 0) {
-        window.location.href = '/cart'; // Redirige vers le panier (qui affichera "panier vide")
+        window.location.href = '/cart'; // Redirige vers le panier
         return htmlToFragment("<div>Panier vide...</div>");
     }
 
