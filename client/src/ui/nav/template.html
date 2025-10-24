@@ -10,13 +10,23 @@
     </div>
 
     <!-- Center - Logo -->
-    <div class="absolute left-1/2 transform -translate-x-1/2">
-        <a href="/">
-        <img src="../../../public/Design.svg" alt="EVISU" class="w-[227px] h-[46px]"></a>
-    </div>
+     <a href="/">
+    <div class="absolute left-1/2 transform -translate-x-1/2 p-1">
+        
+            <img src="../../../public/Design.svg" alt="EVISU" class="w-[227px] h-[46px]">
+        
+    </div></a>
 
-    <!-- Right section - User Profile -->
-    <div class="flex-1 flex justify-end pr-[37px] relative">
+    <!-- Right section - User Profile & Basket -->
+    <div class="flex-1 flex justify-end pr-[37px] gap-4 relative items-center">
+        <!-- Bouton du panier -->
+        <button id="basketBtn" class="hover:text-gray-600 transition-colors focus:outline-none relative">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+  <path d="M5 4.5C5 4.5 5 1.5 8 1.5C11 1.5 11 4.5 11 4.5M2.5 4.5V14.5H13.5V4.5H2.5Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+            <span id="basketCount" data-basket-count class="absolute -top-2 -right-2 bg-black text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+        </button>
+
         <!-- État authentifié : Bouton avec dropdown -->
         <div id="authState" class="hidden">
             <button id="profileBtn" class="hover:text-gray-600 transition-colors focus:outline-none">
@@ -60,7 +70,7 @@
     <!-- Mobile menu -->
     <div id="menuItems" class="lg:hidden fixed inset-0 bg-white transform translate-x-[-100%] transition-transform duration-300 z-10">
         <ul class="flex flex-col items-center justify-center h-full space-y-8 text-black text-sm uppercase tracking-wider">
-            <li><a href="/category/0/all" data-id="1" data-category data-link class="hover:text-gray-600 transition-colors">TOUT</a></li>
+            <li><a href="/products" data-id="1" data-category data-link class="hover:text-gray-600 transition-colors">TOUT</a></li>
             <li><a href="/category/1/accessoires" data-id="2" data-category data-link class="hover:text-gray-600 transition-colors">ACCESSOIRES</a></li>
             <li><a href="/category/2/bas" data-id="3" data-category data-link class="hover:text-gray-600 transition-colors">BAS</a></li>
             <li><a href="/category/3/haut" data-id="4" data-category data-link class="hover:text-gray-600 transition-colors">HAUT</a></li>

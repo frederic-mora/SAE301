@@ -5,6 +5,7 @@ import template from "./template.html?raw";
 // import { Router } from "../../lib/router.js";
 import { htmlToFragment } from "../../lib/utils.js";
 import { Router } from "../../lib/router.js";
+import { ToastManager } from "../../lib/toast.js";
 
 let M = {
     profiles: []
@@ -80,16 +81,16 @@ C.handler_updateProfile = async function(ev) {
         const result = await LoginData.updateProfile(formData);
         if (result && result.success) {
             console.log('Profil mis à jour avec succès:', result.user);
-            alert('Profil mis à jour avec succès');
+            ToastManager.success('Profil mis à jour avec succès');
             // Optionnel: recharger la page ou rafraîchir les données
             // window.location.reload();
         } else {
             console.error('Erreur lors de la mise à jour:', result?.error);
-            alert('Erreur lors de la mise à jour du profil: ' + (result?.error || 'Erreur inconnue'));
+            ToastManager.error('Erreur lors de la mise à jour du profil: ' + (result?.error || 'Erreur inconnue'));
         }
     } catch (error) {
         console.error('Erreur:', error);
-        alert('Une erreur s\'est produite: ' + error.message);
+        // ToastManager.error('Une erreur s\'est produite: ' + error.message);
     }
 }
 

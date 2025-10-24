@@ -1,0 +1,28 @@
+ <div class="flex gap-4 pb-4 border-b border-gray-200 last:border-b-0" data-basket-item="${item.id}">
+          <!-- Image -->
+          <div class="flex-shrink-0">
+            <div class="w-20 h-20 bg-gray-200">
+              <img src="{{image}}" alt="{{name}}" class="w-full h-full object-cover" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            </div>
+          </div>
+
+          <!-- Infos produit -->
+          <div class="flex-1">
+            <p class="text-xs uppercase tracking-widest font-medium text-gray-600">{{statut}}</p>
+            <p class="text-xs uppercase tracking-widest font-medium text-gray-600">{{collection}}</p>
+            <p class="text-xs font-medium mb-2">{{name}}</p>
+            <p class="text-sm font-black mb-3">{{price}} €</p>
+
+            <!-- Quantité -->
+            <div class="flex items-center gap-2 mb-3">
+              <button type="button" class="w-6 h-6 border border-gray-300 text-xs decreaseQty" data-product-id="{{id}}">-</button>
+              <span class="w-6 text-center text-sm font-medium" data-quantity>{{quantity}}</span>
+              <button type="button" class="w-6 h-6 border border-gray-300 text-xs increaseQty" data-product-id="{{id}}">+</button>
+            </div>
+
+            <!-- Supprimer -->
+            <button type="button" class="text-xs text-red-600 uppercase tracking-widest font-medium removeItem" data-product-id="{{id}}">
+              Supprimer
+            </button>
+          </div>
+        </div>

@@ -1,7 +1,7 @@
 <?php
 
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 1);
 
 // Start output buffering to capture unexpected HTML output before JSON
 ob_start();
@@ -23,6 +23,9 @@ require_once "src/Controller/CategoryController.php";
 require_once "src/Class/HttpRequest.php";
 require_once "src/Controller/ProductGalleryController.php";
 require_once "src/Controller/UserController.php";
+require_once "src/Controller/OrderController.php";
+require_once "src/Controller/OrderItemController.php";
+
 
 
 /** IMPORTANT
@@ -52,6 +55,8 @@ try {
         "categories" => new CategoryController(),
         "productgalleries" => new ProductGalleryController(),
         "users" => new UserController(),
+        "orders" => new OrderController(),
+        "orderItems" => new OrderItemController(),
     ];
 } catch (Exception $e) {
     ob_get_clean();

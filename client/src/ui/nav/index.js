@@ -1,5 +1,6 @@
 import { htmlToFragment } from "../../lib/utils.js";
 import { LoginData } from "../../data/login.js";
+import { BasketView } from "../basket/index.js";
 import template from "./template.html?raw";
 
 // NavView est un composant statique
@@ -53,12 +54,13 @@ let NavView = {
       });
     }
 
-    // Fermer le dropdown quand on clique ailleurs
-    document.addEventListener('click', (ev) => {
-      if (profileDropdown && !profileDropdown.contains(ev.target) && !profileBtn.contains(ev.target)) {
-        profileDropdown.classList.add('hidden');
-      }
-    });
+    // Gestion du bouton panier
+    const basketBtn = fragment.querySelector('#basketBtn');
+    if (basketBtn) {
+      basketBtn.addEventListener('click', () => {
+        BasketView.show();
+      });
+    }
 
     return fragment;
   }

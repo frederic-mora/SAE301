@@ -11,6 +11,7 @@ import { LoginPage } from "./pages/login/page.js";
 import { SignupsPage } from "./pages/signup/page.js";
 import { ProfilePage } from "./pages/profile/page.js";
 import { SuccessPage } from "./pages/success/page.js";
+import { BasketPageHandler } from "./pages/basket/page.js";
 
 // Exemple d'utilisation avec authentification
 
@@ -25,13 +26,18 @@ router.addRoute("/products", ProductsPage);
 router.addRoute("/products/:id/:slug", ProductDetailPage);
 router.addRoute("/category/:id/:category", ProductsCategoryPage);
 
+router.addRoute("/basket", BasketPageHandler);
+
 router.addRoute("/login", LoginPage);
 router.addRoute("/signup", SignupsPage);
 router.addRoute("/profile", ProfilePage,{ authRequired: true });
 router.addRoute("/success", SuccessPage);
 
 router.addRoute("*", The404Page);
-// window.router = router;
+
+// Exposer le router globalement pour l'accès depuis les événements
+window.router = router;
+
 // Démarrer le routeur
 router.start();
 

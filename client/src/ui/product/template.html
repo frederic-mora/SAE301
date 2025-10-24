@@ -1,26 +1,47 @@
-<a href="/products/{{id}}/{{image}}" data-link>
-<article  data-buy class="bg-white flex flex-row md:flex-col gap-5 md:gap-2 items-center md:items-start w-full product-card">
-    <div class="relative w-32 h-32 md:w-full md:h-auto md:aspect-square shrink-0">
-        <img 
-            src="../../../public/productsImage/{{image}}.jpg"
-            alt="Photo du produit {{name}}" 
-            class="absolute inset-0 w-full h-full object-cover"
-        >
-    </div>
-    <div class="flex flex-col gap-[2px] items-start w-full text-black">
-        <header>
-            <p class="hidden text-xs md:text-[15px] tracking-[0.9px] uppercase w-full leading-normal" aria-label="Statut du produit">
-                {{statut}}
-            </p>
-            <h2 class="text-xs md:text-[15px] tracking-[0.9px] uppercase w-full leading-normal" aria-label="Collection">
-                {{collection}}
-            </h2>
-        </header>
-        <h3 class="text-xs md:text-[15px] tracking-[0.9px] w-full leading-normal" aria-label="Nom du produit">
-            {{name}}
-        </h3>
-        <div class="text-sm md:text-[16px] tracking-[0.8px] w-full leading-[15px] mt-2">
-            <p aria-label="Prix">{{price}}€</p>
+<article class="bg-white border border-black overflow-hidden group hover:shadow-lg transition-shadow duration-300">
+    <!-- Layout responsive: horizontal sur mobile, vertical sur desktop -->
+    <div class="flex flex-col md:flex-col">
+        <!-- Image: full width sur desktop, constrained width sur mobile -->
+        <a href="/products/{{id}}/{{image}}" data-link class="block relative w-full md:w-full aspect-square md:aspect-square overflow-hidden bg-gray-100">
+            <img 
+                src="../../../public/productsImage/{{image}}.jpg"
+                alt="Photo du produit {{name}}" 
+                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            >
+        </a>
+        
+        <!-- Contenu: flexible width sur mobile, full width sur desktop -->
+        <div class="flex flex-col w-full p-2 xs:p-3 sm:p-4 md:p-6 gap-1.5 xs:gap-2 sm:gap-2.5 md:gap-3">
+            <!-- Info produit -->
+            <div class="flex flex-col gap-1 xs:gap-1.5 sm:gap-2">
+                <!-- Status/Collection -->
+                <h2 class="text-[10px] xs:text-[11px] sm:text-xs md:text-sm uppercase tracking-widest font-bold text-gray-600 line-clamp-1">{{collection}}</h2>
+                
+                <!-- Nom produit -->
+                <a href="/products/{{id}}/{{image}}" data-link class="block text-xs xs:text-sm sm:text-base md:text-lg uppercase tracking-wider font-light hover:underline line-clamp-2 leading-tight min-h-[1.75rem] xs:min-h-[2rem] sm:min-h-[2.5rem]">
+                    {{name}}
+                </a>
+                
+                <!-- Prix -->
+                <p class="text-sm xs:text-base sm:text-lg md:text-xl font-black tracking-wider">{{price}}€</p>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex gap-1.5 xs:gap-2 sm:gap-2.5 md:gap-3 mt-1 xs:mt-1.5 sm:mt-2 md:mt-3">
+                <!-- Lien Détail -->
+                <a href="/products/{{id}}/{{image}}" data-link class="flex-1 text-[10px] xs:text-[11px] sm:text-xs md:text-sm uppercase tracking-widest border border-black px-1.5 xs:px-2 sm:px-3 md:px-4 py-1.5 xs:py-2 sm:py-2.5 md:py-3 hover:bg-black hover:text-white transition-colors text-center font-medium">
+                    Détail
+                </a>
+                
+                <!-- Bouton Panier -->
+                <button 
+                    data-buy="{{id}}"
+                    class="flex-1 text-[10px] xs:text-[11px] sm:text-xs md:text-sm uppercase tracking-widest border border-black bg-black text-white px-1.5 xs:px-2 sm:px-3 md:px-4 py-1.5 xs:py-2 sm:py-2.5 md:py-3 hover:bg-white hover:text-black transition-colors font-medium"
+                    title="Ajouter {{name}} au panier"
+                >
+                    Ajouter
+                </button>
+            </div>
         </div>
     </div>
-</article></a>
+</article>

@@ -49,9 +49,19 @@
             </div>
         </div>
 
-            <button class="bg-black text-white py-4 px-8 hover:bg-gray-800 transition-colors mt-4" data-buy="{{id}}">
-                AJOUTER AU PANIER
-            </button>
+            <div class="flex items-center gap-4 mt-4 w-full max-w-md">
+                <!-- Sélection de quantité -->
+                <div class="flex items-center ">
+                    <button type="button" class="gap-2 border border-black w-10 h-10 flex items-center justify-center hover:bg-gray-100" id="decreaseQtyBtn">−</button>
+                    <input type="number"  id="quantityInput" value="1" min="1" max="999" class="w-12 text-center items-center outline-none " />
+                    <button type="button" class="gap-2 border border-black w-10 h-10 flex items-center justify-center hover:bg-gray-100" id="increaseQtyBtn">+</button>
+                </div>
+                
+                <!-- Bouton ajouter au panier -->
+                <button class="flex-1 bg-black text-white py-3 px-8 uppercase tracking-widest font-black text-sm hover:bg-gray-800 transition-colors" data-buy="{{id}}">
+                    AJOUTER
+                </button>
+            </div>
         </div>
     </div>
 </div>

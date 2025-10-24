@@ -22,11 +22,16 @@ C.init = async function() {
         }
     }
     
-    // Récupérer les produits de la collection "fall/winter 2025 collection"
-    // ID de la catégorie à adapter selon votre base de données
-    M.products = await ProductData.fetchByCategory(2); // À adapter selon l'ID réel
+    // Récupérer les produits - essayer catégorie 2 (Fall/Winter), sinon tous les produits
+    let products = [];
+    try {
+        products = await ProductData.fetchByCategory(2); // Fall/Winter collection
+    } catch (error) {
+        console.warn('Erreur récupération catégorie 2, utilisation de tous les produits:', error);
+        products = await ProductData.fetchAll();
+    }
     
-    return V.init(userData, isAuthenticated, M.products);
+    return V.init(userData, isAuthenticated, products);
 };
 
 V.init = function(userData, isAuthenticated, products) {
@@ -57,7 +62,10 @@ V.init = function(userData, isAuthenticated, products) {
         }
     }
     
-    // Remplir les produits
+    // Afficher les produits de la catégorie 2 (sans filtrer par collection pour le moment)
+    console.log('Produits reçus:', products);
+    
+    // Remplir les produits avec les vraies données de la BDD
     const productsContainer = fragment.querySelector('[data-products-container]');
     if (productsContainer && products && products.length > 0) {
         // Limiter à 3 produits maximum
@@ -70,15 +78,27 @@ V.init = function(userData, isAuthenticated, products) {
                 const nameEl = productElement.querySelector('[data-product-name]');
                 const priceEl = productElement.querySelector('[data-product-price]');
                 const imageEl = productElement.querySelector('[data-product-image]');
+                const linkEl = productElement.querySelector('a[data-link]');
                 
                 if (nameEl) nameEl.textContent = product.name || 'Produit';
-                if (priceEl) priceEl.textContent = `€${product.price || '0'}`;
+                if (priceEl) priceEl.textContent = `€${parseFloat(product.price || 0).toFixed(2)}`;
+                
+                // Utiliser l'image de la BDD avec le bon chemin
                 if (imageEl && product.image) {
-                    imageEl.src = product.image;
-                    imageEl.alt = product.name;
+                    // Construire le chemin de l'image selon la structure
+                    const imagePath = `../../../public/productsImage/${product.image}.jpg`;
+                    imageEl.src = imagePath;
+                    imageEl.alt = product.name || 'Produit';
+                }
+                
+                // Mettre à jour les liens vers les détails produit
+                if (linkEl) {
+                    linkEl.href = `/products/${product.id}/${product.image}`;
                 }
             }
         });
+    } else {
+        console.warn('Aucun produit trouvé pour la catégorie 2');
     }
     
     return fragment;

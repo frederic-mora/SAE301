@@ -1,6 +1,7 @@
 import { LoginData } from "../../data/login.js";
 import { SignupView } from "../../ui/signup/index.js";
 import { htmlToFragment } from "../../lib/utils.js";
+import { ToastManager } from "../../lib/toast.js";
 import template from "./template.html?raw";
 
 let M = {
@@ -28,15 +29,15 @@ C.handler_submit = async function(ev) {
         console.log("Résultat de l'inscription:", result);
         if (result && result.success) {
             console.log("Inscription réussie - Redirection...");
-            // alert("Inscription réussie ! Vous allez être redirigé vers la page de connexion.");
+            ToastManager.success("Inscription réussie ! Redirection...");
             window.location.href = '/login';
         } else {
             console.log("Inscription échouée:", result?.error || "Erreur inconnue");
-            // alert(result?.error || "L'inscription a échoué. Veuillez réessayer.");
+            ToastManager.error(result?.error || "L'inscription a échoué. Veuillez réessayer.");
         }
     } catch (error) {
         console.error("Erreur lors de l'inscription:", error);
-        alert("Une erreur est survenue lors de l'inscription. Veuillez réessayer.");
+        ToastManager.error("Une erreur est survenue lors de l'inscription. Veuillez réessayer.");
     }
 }
 

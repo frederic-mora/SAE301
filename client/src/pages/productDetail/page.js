@@ -1,8 +1,11 @@
 import { ProductData } from "../../data/product.js";
 import { ProductGallery } from "../../data/productGallery.js";
+import { BasketData } from "../../data/basket.js";
+import { BasketView } from "../../ui/basket/index.js";
 import { htmlToFragment } from "../../lib/utils.js";
 import { DetailView } from "../../ui/detail/index.js";
 import { MignatureView } from "../../ui/mignature/index.js";
+import { ToastManager } from "../../lib/toast.js";
 import template from "./template.html?raw";
 
 
@@ -32,9 +35,43 @@ M.filterGallById = function(id) {
 let C = {};
 
 C.handler_clickOnProduct = function(ev){
-    if (ev.target.dataset.buy!==undefined){
-        let id = ev.target.dataset.buy;
-        alert(`Produit ajouté au panier ! (Quand il y en aura un)`);
+    if (ev.target.dataset.buy !== undefined){
+        let productId = parseInt(ev.target.dataset.buy);
+        let product = M.getProductById(productId);
+        
+        if (product) {
+            // Récupérer la quantité depuis l'input
+            const quantityInput = document.querySelector('#quantityInput');
+            let quantity = 1;
+            
+            if (quantityInput) {
+                quantity = Math.max(1, parseInt(quantityInput.value) || 1);
+            }
+            
+            // Ajouter au panier avec la quantité spécifiée
+            BasketData.addItem({
+                id: product.id,
+                name: product.name,
+                price: parseFloat(product.price) || 0,
+                image: product.image || '',
+                collection: product.collection || 'Collection',
+                statut: product.statut || product.status || 'Produit'
+            }, quantity);
+            
+            // Mettre à jour le badge du panier
+            BasketView.updateBadge();
+            
+            // Réinitialiser la quantité
+            if (quantityInput) {
+                quantityInput.value = 1;
+            }
+            
+            // Afficher un message de succès avec un toast
+            ToastManager.success(`${quantity}x ${product.name} ajouté au panier!`);
+            
+            // Optionnel: ouvrir le panier
+            // BasketView.show();
+        }
     }
 }
 
@@ -61,19 +98,33 @@ C.init = async function(params) {
 }
 
 C.handler_clickOnGallery = function(ev) {
-    if (ev.target.dataset.id !== undefined) {
-        let imageId = ev.target.dataset.id;
-        console.log("Clicked image ID:", imageId);
-        let gallItem = M.filterGallById(imageId);
-        // Logique pour changer l'image principale en fonction de l'image miniature cliquée
-        console.log("Gallery item found:", gallItem);
-        let mainImage = document.querySelector('#mainImage');
-        if (mainImage && gallItem) {
-            mainImage.src = `../../../public/productsImage/${gallItem.image}/${gallItem.image}.webp`;
-            console.log("Updated main image src:", mainImage.src);
-        } else {
-            console.log("Either mainImage or gallItem is missing:", { mainImage: !!mainImage, gallItem });
-        }
+    const clickedElement = ev.target.closest('[data-id]');
+    if (!clickedElement) {
+        console.log("No element with data-id found");
+        return;
+    }
+
+    const imageId = clickedElement.dataset.id;
+    console.log("Clicked image ID:", imageId);
+    const gallItem = M.filterGallById(imageId);
+    console.log("Gallery item found:", gallItem);
+
+    if (!gallItem) {
+        console.error("No gallery item found for ID:", imageId);
+        return;
+    }
+
+    const mainImage = document.querySelector('#mainImage');
+    if (!mainImage) {
+        console.error("Main image element not found");
+        return;
+    }
+
+    try {
+        mainImage.src = `../../../public/productsImage/${gallItem.path}/${gallItem.image}.webp`;
+        console.log("Updated main image src:", mainImage.src);
+    } catch (error) {
+        console.error("Error updating image:", error);
     }
 }
 
@@ -194,9 +245,49 @@ V.createPageFragment = function(data) {
 }
 
 V.attachEvents = function(pageFragment) {
-    // Attacher un event listener au bouton
+    // Attacher un event listener au bouton ajouter au panier
     const addToCartBtn = pageFragment.querySelector('[data-buy]');
     addToCartBtn.addEventListener('click', C.handler_clickOnProduct);
+    
+    // Gestion de la quantité
+    const quantityInput = pageFragment.querySelector('#quantityInput');
+    const increaseBtn = pageFragment.querySelector('#increaseQtyBtn');
+    const decreaseBtn = pageFragment.querySelector('#decreaseQtyBtn');
+    
+    if (increaseBtn) {
+        increaseBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (quantityInput) {
+                let currentValue = parseInt(quantityInput.value) || 1;
+                quantityInput.value = currentValue + 1;
+            }
+        });
+    }
+    
+    if (decreaseBtn) {
+        decreaseBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (quantityInput) {
+                let currentValue = parseInt(quantityInput.value) || 1;
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            }
+        });
+    }
+    
+    // Validation de l'input quantité
+    if (quantityInput) {
+        quantityInput.addEventListener('change', (e) => {
+            let value = parseInt(e.target.value);
+            if (isNaN(value) || value < 1) {
+                e.target.value = 1;
+            } else if (value > 999) {
+                e.target.value = 999;
+            }
+        });
+    }
+    
     const gallery = pageFragment.querySelector('#migniatureContainer');
     gallery.addEventListener('click', C.handler_clickOnGallery);
     return pageFragment;

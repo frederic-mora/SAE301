@@ -1,0 +1,57 @@
+<div class="min-h-screen bg-white">
+  <!-- Hero Section -->
+  <section class="border-b border-black px-4 py-12 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-4xl sm:text-5xl font-black uppercase tracking-widest mb-2">PANIER</h1>
+      <p class="text-sm uppercase tracking-widest text-gray-600">Votre sélection de produits</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Items List -->
+      <div class="lg:col-span-2">
+        <div data-basket-items class="space-y-4">
+          <!-- Items will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Summary Sidebar -->
+      <div class="lg:col-span-1">
+        <div class="border border-black p-6 sticky top-6">
+          <h2 class="text-lg font-black uppercase tracking-widest mb-6">RÉSUMÉ</h2>
+          
+          <!-- Subtotal -->
+          <div class="flex justify-between mb-4 pb-4 border-b border-gray-200">
+            <span class="text-sm uppercase tracking-widest">Sous-total</span>
+            <span class="text-sm font-medium" id="basketSubtotal">0,00 €</span>
+          </div>
+
+          <!-- Shipping -->
+          <div class="flex justify-between mb-4 pb-4 border-b border-gray-200">
+            <span class="text-sm uppercase tracking-widest">Livraison</span>
+            <span class="text-sm font-medium">Gratuite</span>
+          </div>
+
+          <!-- Total -->
+          <div class="flex justify-between mb-6">
+            <span class="text-sm font-black uppercase tracking-widest">Total</span>
+            <span class="text-lg font-black" id="basketTotal">{{basketTotal}}</span>
+          </div>
+
+          <!-- Checkout Button -->
+          <button id="checkoutBtn" type="button" class="w-full bg-black text-white py-3 px-4 uppercase tracking-widest font-black text-sm hover:bg-gray-800 transition-colors mb-3">
+            Passer la commande
+          </button>
+
+          <!-- Continue Shopping -->
+          <button id="continueShopping" type="button" class="w-full border border-black text-black py-3 px-4 uppercase tracking-widest font-black text-sm hover:bg-gray-50 transition-colors">
+            Continuer mes achats
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

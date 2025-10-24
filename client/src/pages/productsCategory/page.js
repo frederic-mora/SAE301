@@ -2,6 +2,7 @@ import { ProductData } from "../../data/product.js";
 import {CategoryData} from "../../data/category.js";
 import { ProductView } from "../../ui/product/index.js";
 import { htmlToFragment } from "../../lib/utils.js";
+import { ToastManager } from "../../lib/toast.js";
 import template from "./template.html?raw";
 
 // import { HeaderView } from "../../ui/header/index.js";
@@ -32,7 +33,7 @@ let C = {};
 C.handler_clickOnProduct = function(ev){
     if (ev.target.dataset.buy!==undefined){
         let id = ev.target.dataset.buy;
-        alert(`Le produit d'identifiant ${id} ? Excellent choix !`);
+        ToastManager.info(`Produit ${id} - Excellent choix !`);
     }
 }
 

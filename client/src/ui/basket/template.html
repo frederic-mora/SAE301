@@ -1,0 +1,39 @@
+<div id="basketOverlay" class="fixed inset-0 z-40 hidden" data-backdrop>
+  <div class="absolute inset-0 bg-black opacity-5" data-backdrop-overlay></div>
+</div>
+
+<div id="basketSidebar" class="fixed right-0 top-0 h-screen w-full max-w-sm bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-300" data-basket-sidebar>
+  <!-- Header du panier -->
+  <div class="border-b border-gray-200 p-6">
+    <div class="flex items-center justify-between">
+      <h2 class="text-xl font-black tracking-wider uppercase">Mon Panier</h2>
+      <button type="button" id="closeBasketBtn" class="text-2xl leading-none">&times;</button>
+    </div>
+  </div>
+
+  <!-- Liste des articles -->
+  <div id="basketItemsContainer" class="overflow-y-auto pb-64" style="height: calc(100vh - 120px);">
+    <div id="basketItems" class="space-y-4 p-6" data-basket-items>
+      <!-- Les articles seront remplis dynamiquement -->
+      <p class="text-sm text-gray-500 text-center py-8">Le panier est vide</p>
+    </div>
+  </div>
+
+  <!-- Footer du panier avec bouton -->
+  <div class="absolute bottom-0 left-0 right-0 border-t border-gray-200 bg-white">
+    <!-- Sous-total -->
+    <div class="px-6 py-4 border-b border-gray-200">
+      <div class="flex justify-between items-center">
+        <span class="text-sm uppercase tracking-widest">Total:</span>
+        <span class="text-lg font-black" id="basketTotal">0,00 €</span>
+      </div>
+    </div>
+
+    <!-- Bouton de commande -->
+    <div class="p-6">
+      <button id="checkoutBtn" class="w-full h-12 bg-black text-white text-xs uppercase tracking-widest font-bold hover:bg-gray-800 transition-colors">
+        Commander
+      </button>
+    </div>
+  </div>
+</div>
