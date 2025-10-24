@@ -1,0 +1,24 @@
+<div class="container mx-auto px-4 py-8 max-w-3xl">
+    <h1 class="text-2xl font-bold mb-8">Récapitulatif de votre commande</h1>
+
+    <div class="bg-white p-6 shadow-sm">
+        <h2 class="text-lg font-semibold mb-4">Vos articles</h2>
+        <div id="summary-items" class="space-y-4">
+        </div>
+
+        <div class="border-t mt-6 pt-4">
+            <div class="flex justify-between items-center text-xl font-bold">
+                <span>Total</span>
+                <span id="summary-total">0.00 €</span>
+            </div>
+        </div>
+
+        <div id="checkout-error" class="text-sm text-red-600 hidden mt-4"></div>
+
+        <div class="mt-8">
+            <button id="confirm-checkout-btn" class="w-full bg-gray-800 text-white py-3 rounded-sm text-lg">
+                Confirmer et Payer
+            </button>
+        </div>
+    </div>
+</div>

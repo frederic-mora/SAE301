@@ -1,23 +1,33 @@
-<article class="mx-auto max-w-2xl rounded-lg bg-white p-8 shadow-lg">
-  <!-- Placeholder pour l'image du produit -->
-  <div class="mb-6 flex h-64 items-center justify-center rounded-lg bg-gray-200">
-    <svg class="h-20 w-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-    </svg>
-  </div>
-  
-  <div class="mb-2 text-sm font-medium text-gray-500">ID: {{id}}</div>
-  <h1 class="mb-4 text-3xl font-bold text-gray-900">{{name}}</h1>
-  <p class="mb-6 text-lg text-gray-700">{{description}}</p>
-  
-  <div class="mb-6">
-    <span class="text-2xl font-bold text-green-600">{{price}} €</span>
-  </div>
-  
-  <button 
-    data-buy="{{id}}" 
-    class="w-full rounded-lg bg-green-600 px-6 py-3 text-lg font-semibold text-white transition hover:bg-green-700"
-  >
-    Ajouter au panier
-  </button>
-</article>
+<section class="flex justify-center">
+  <article class="mx-auto max-w-4xl bg-[#f7f5ef] p-6 m-2 flex flex-col justify-center
+    md:flex-row md:p-12 md:m-6 md:gap-12">
+    <div class="flex flex-col items-center w-full md:w-1/2">
+      <div class="flex gap-2">
+        <slot name="image-galerie"></slot>
+      </div>
+    </div>
+
+    <div class="flex flex-col justify-center w-full md:w-1/2">
+      <h1 class="mb-2 text-xl font-normal text-gray-900 md:mb-4 md:text-2xl">{{name}}</h1>
+
+      <div id="product-price" class="mb-1 text-lg text-gray-700 md:mb-2 md:text-xl">{{price}} €</div>
+
+      <p class="mb-4 text-sm text-gray-700 leading-relaxed md:mb-8 md:text-base">{{description}}</p>
+
+      <div id="product-options" class="flex flex-col gap-4 mb-6">
+      </div>
+
+      <div id="variant-stock-status" class="text-sm mb-2 h-5 font-semibold"></div>
+
+      <button
+              id="add-to-cart-btn"
+              class="w-full bg-gray-700 text-white text-base font-normal py-3 rounded-none transition hover:bg-gray-900 md:text-lg md:py-4
+              disabled:bg-gray-400 disabled:cursor-not-allowed"
+              disabled
+      >
+        Sélectionnez vos options
+      </button>
+      <div id="variant-error" class="text-red-600 text-sm mt-2 hidden"></div>
+    </div>
+  </article>
+</section>

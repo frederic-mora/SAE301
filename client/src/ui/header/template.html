@@ -1,10 +1,41 @@
-<header style="background: #333; color: white; padding: 1rem;">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2 style="margin: 0;">Click & Collect</h2>
-        <nav style="display: flex; gap: 1rem;">
-            <a href="/" data-link style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">Accueil</a>
-            <a href="/products" data-link style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">Produits</a>
-            <a href="/about" data-link style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">À propos</a>
-        </nav>
+<!-- client/src/ui/header/template.html -->
+<header class="w-full bg-[#d3cfca] border-b border-neutral-400">
+    <div class="relative h-20 max-w-7xl mx-auto px-6 flex items-start">
+        <div class="flex-1"></div>
+
+        <!-- Right: compte + panier (alignés full à droite) -->
+        <div class="flex items-center gap-4 mt-4">
+            <a href="/dashboard/profile" class="flex items-center text-xs text-black space-x-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 00-8 0v2M12 11a4 4 0 100-8 4 4 0 000 8z" />
+                </svg>
+                <span>Compte</span>
+            </a>
+
+            <a href="/cart" class="relative flex items-center text-xs text-black space-x-2">
+
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                    </path>
+                </svg>
+                <span id="cart-counter"
+                      class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
+
+
+            </a>
+        </div>
+
+        <!-- Center: logo (absolu pour rester centré) -->
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+            <img src="{{logoSrc}}" alt="Hermès" class="h-10" />
+        </div>
     </div>
+
+    <nav class="flex justify-center gap-12 py-2">
+        <a href="/products" class="text-[11px] uppercase tracking-widest text-black hover:underline">VOIR TOUS LES PRODUITS</a>
+        <a href="/categories/Maroquinerie" class="text-[11px] uppercase tracking-widest text-black hover:underline">MAROQUINERIE</a>
+        <a href="/categories/horlogerie" class="text-[11px] uppercase tracking-widest text-black hover:underline">HORLOGERIE</a>
+        <a href="/categories/parfumerie" class="text-[11px] uppercase tracking-widest text-black hover:underline">PARFUMERIE</a>
+    </nav>
 </header>
