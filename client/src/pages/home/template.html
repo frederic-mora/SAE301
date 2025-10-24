@@ -1,17 +1,60 @@
-<!-- client/src/pages/home/template.html -->
-<div class="mx-auto max-w-4xl p-6">
-  <h1 class="mb-6 text-4xl font-bold text-gray-900">Accueil</h1>
+<div class="w-full bg-white">
 
-  <img
-          src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&h=400&fit=crop"
-          alt="Image d'accueil - Shopping"
-          class="mb-6 rounded-lg shadow-lg w-full h-64 object-cover"
-          style="filter: grayscale(1);"
-  />
+  <section class="relative w-full h-[70vh] bg-gray-200">
+    <img id="hero-banner-image"
+         src="" alt="Bannière principale"
+         class="absolute inset-0 w-full h-full object-cover"/>
 
-  <p>
-    Bienvenue sur notre plateforme de Click &amp; Collect ! Découvrez une sélection variée de produits et profitez d'une expérience d'achat simple et rapide.
-  </p>
+    <div class="relative z-10 flex flex-col justify-center items-start text-left text-black p-12 md:p-24 bg-gradient-to-r from-white/70 via-white/30 to-transparent h-full">
+      <h1 id="hero-title" class="text-4xl md:text-5xl font-light uppercase tracking-widest mb-4">
+        FERMER LES REGARDS
+      </h1>
+      <p id="hero-subtitle" class="mt-2 max-w-md text-base">
+        L'utilisateur fournira le contenu et l'image de la bannière ici.
+      </p>
+      <a href="/products" data-link class="mt-6 px-8 py-3 border border-black text-black uppercase text-xs font-semibold tracking-wider hover:bg-black hover:text-white">
+        Découvrir
+      </a>
+    </div>
+  </section>
 
-  <p id="user-email">Vous n\êtes pas connecté.</p>
+  <section class="py-16 bg-[#E2D8CE]"> <div class="container mx-auto px-6">
+    <h2 id="home-category-1-title" class="text-3xl font-light text-center uppercase tracking-widest mb-10">
+      LE TEMPS EN DEUX ACTES
+    </h2>
+
+    <div class="mb-12 w-full h-[50vh]">
+      <img id="category-1-image"
+           src="" alt="Image catégorie horlogerie"
+           class="w-full h-full object-cover bg-gray-200"/>
+    </div>
+
+    <div id="home-category-1-products">
+    </div>
+  </div>
+  </section>
+
+
+
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-6">
+      <h2 id="home-category-2-title" class="text-3xl font-light text-center uppercase tracking-widest mb-10">
+        LE CHIC, SIGNÉ CUIR
+      </h2>
+
+      <div class="mb-12 w-full h-[50vh]">
+        <img id="category-2-image"
+             src="" alt="Image catégorie maroquinerie"
+             class="w-full h-full object-cover bg-gray-200"/>
+      </div>
+
+      <div id="home-category-2-products">
+      </div>
+    </div>
+  </section>
+
+  <div class="py-4 bg-gray-100 text-center">
+    <p id="user-email" class="text-sm text-gray-600">Chargement du statut...</p>
+  </div>
+
 </div>

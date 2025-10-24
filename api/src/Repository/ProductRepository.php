@@ -2,6 +2,12 @@
 
 require_once __DIR__ . '/EntityRepository.php';
 require_once __DIR__ . '/../Class/Product.php';
+// --- AJOUTS US008 ---
+require_once __DIR__ . '/../Class/OptionType.php';
+require_once __DIR__ . '/../Class/OptionValue.php';
+require_once __DIR__ . '/../Class/ProductVariant.php';
+// --- FIN AJOUTS US008 ---
+
 
 class ProductRepository extends EntityRepository {
 
@@ -20,13 +26,19 @@ class ProductRepository extends EntityRepository {
         $p = new Product($answer->id);
         $p->setName($answer->name);
         $p->setIdcategory($answer->category);
-        $p->setPrice($answer->price);
+        $p->setPrice($answer->base_price ?? $answer->price); // Utiliser base_price
         $p->setDescription($answer->description);
         $p->setImageUrl($answer->imageUrl);
 
         // Récupération des images
         $images = $this->getImagesForProduct($answer->id);
         $p->setImages($images);
+
+        // --- AJOUTS US008 ---
+        // Récupération des options et variantes
+        $p->setOptions($this->getOptionsForProduct($answer->id));
+        $p->setVariants($this->getVariantsForProduct($answer->id));
+        // --- FIN AJOUTS US008 ---
 
         return $p;
     }
@@ -40,13 +52,19 @@ class ProductRepository extends EntityRepository {
             $p = new Product($obj->id);
             $p->setName($obj->name);
             $p->setIdcategory($obj->category);
-            $p->setPrice($obj->price);
+            $p->setPrice($obj->base_price ?? $obj->price); // Utiliser base_price
             $p->setDescription($obj->description);
             $p->setImageUrl($obj->imageUrl);
 
             // Récupération des images
             $images = $this->getImagesForProduct($obj->id);
             $p->setImages($images);
+
+            // --- AJOUTS US008 ---
+            // Récupération des options et variantes
+            $p->setOptions($this->getOptionsForProduct($obj->id));
+            $p->setVariants($this->getVariantsForProduct($obj->id));
+            // --- FIN AJOUTS US008 ---
 
             array_push($res, $p);
         }
@@ -66,25 +84,97 @@ class ProductRepository extends EntityRepository {
         return $images;
     }
 
-    public function save($product){
-        $requete = $this->cnx->prepare("insert into Product (name, category, price,description, imageUrl) values (:name, :idcategory, :price, :description, :imageUrl)");
-        $name = $product->getName();
-        $idcat = $product->getIdcategory();
-        $price = $product->getPrice();
-        $description = $product->getDescription();
-        $imageUrl = $product->getImageUrl();
-        $requete->bindParam(':name', $name );
-        $requete->bindParam(':idcategory', $idcat);
-        $requete->bindParam(':price', $price);
-        $requete->bindParam(':description', $description);
-        $requete->bindParam(':imageUrl', $imageUrl);
-        $answer = $requete->execute();
-        if ($answer){
-            $id = $this->cnx->lastInsertId();
-            $product->setId($id);
-            return true;
+    // --- NOUVELLES MÉTHODES US008 ---
+
+    /**
+     * Récupère les types d'options et leurs valeurs pour un produit donné
+     */
+    private function getOptionsForProduct(int $productId): array {
+        $sql = "SELECT DISTINCT
+                    ot.id as option_type_id,
+                    ot.name as option_type_name,
+                    ov.id as option_value_id,
+                    ov.value as option_value_value
+                FROM ProductVariant pv
+                JOIN VariantOptionValue vov ON pv.id = vov.product_variant_id
+                JOIN OptionValue ov ON vov.option_value_id = ov.id
+                JOIN OptionType ot ON ov.option_type_id = ot.id
+                WHERE pv.product_id = :productId
+                ORDER BY ot.id, ov.id";
+
+        $stmt = $this->cnx->prepare($sql);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $optionTypes = [];
+        foreach ($rows as $row) {
+            $typeId = $row['option_type_id'];
+            if (!isset($optionTypes[$typeId])) {
+                $optionType = new OptionType((int)$typeId);
+                $optionType->setName($row['option_type_name']);
+                $optionTypes[$typeId] = $optionType;
+            }
+
+            $optionValue = new OptionValue((int)$row['option_value_id']);
+            $optionValue->setOptionTypeId((int)$typeId);
+            $optionValue->setValue($row['option_value_value']);
+
+            // Ajoute la valeur seulement si elle n'existe pas déjà
+            $existingValues = $optionTypes[$typeId]->getValues();
+            $found = false;
+            foreach ($existingValues as $val) {
+                if ($val->getId() == $optionValue->getId()) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $optionTypes[$typeId]->addValue($optionValue);
+            }
         }
-        return false;
+
+        return array_values($optionTypes); // Retourne un tableau d'objets OptionType
+    }
+
+    /**
+     * Récupère les variantes d'un produit
+     */
+    private function getVariantsForProduct(int $productId): array {
+        $sql = "SELECT * FROM ProductVariant WHERE product_id = :productId";
+        $stmt = $this->cnx->prepare($sql);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->execute();
+        $variantRows = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+        $variants = [];
+        foreach ($variantRows as $row) {
+            $variant = new ProductVariant((int)$row->id);
+            $variant->setProductId((int)$row->product_id);
+            $variant->setPrice((float)$row->price);
+            $variant->setStock((int)$row->stock);
+
+            // Récupérer les IDs des OptionValue pour cette variante
+            $sql_values = "SELECT option_value_id FROM VariantOptionValue WHERE product_variant_id = :variantId";
+            $stmt_values = $this->cnx->prepare($sql_values);
+            $stmt_values->bindValue(':variantId', $row->id);
+            $stmt_values->execute();
+            $valueIds = $stmt_values->fetchAll(PDO::FETCH_COLUMN);
+
+            $variant->setOptionValues(array_map('intval', $valueIds));
+
+            $variants[] = $variant;
+        }
+
+        return $variants;
+    }
+    // --- FIN NOUVELLES MÉTHODES US008 ---
+
+
+    public function save($product){
+        // ... (La logique de sauvegarde devient plus complexe avec les variantes)
+        // ... (Pour l'instant, on suppose que la création se fait via un back-office)
+        return false; // Simplification pour US008
     }
 
     public function delete($id){
