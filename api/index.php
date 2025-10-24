@@ -1,11 +1,28 @@
 <?php
 
 error_reporting(E_ALL);
-ini_set("display_errors", 1) ;
+ini_set('display_errors', 0);
+
+// Start output buffering to capture unexpected HTML output before JSON
+ob_start();
+// // Autoriser ton origine client (ex: http://localhost:5173)
+// header('Access-Control-Allow-Origin: http://localhost:5173');
+// header('Access-Control-Allow-Credentials: true');
+// // Autoriser les en-têtes nécessaires
+// header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+// // Autoriser méthodes
+// header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    // Répondre à la preflight sans body
+    http_response_code(200);
+    exit();
+}
 require_once "src/Controller/ProductController.php";
 require_once "src/Controller/CategoryController.php";
 require_once "src/Class/HttpRequest.php";
 require_once "src/Controller/ProductGalleryController.php";
+require_once "src/Controller/UserController.php";
 
 
 /** IMPORTANT
@@ -29,12 +46,20 @@ require_once "src/Controller/ProductGalleryController.php";
  *  Ici ProductController est le controleur qui traitera toutes les requêtes ciblant la ressource "products"
  *  On ajoutera des "routes" à $router si l'on a d'autres ressource à traiter.
  */
-$router = [
-    "products" => new ProductController(),
-    "categories" => new CategoryController(),
-    "productgalleries" => new ProductGalleryController(),
-    // "users" => new UserController(), ...
-];
+try {
+    $router = [
+        "products" => new ProductController(),
+        "categories" => new CategoryController(),
+        "productgalleries" => new ProductGalleryController(),
+        "users" => new UserController(),
+    ];
+} catch (Exception $e) {
+    ob_get_clean();
+    header('Content-Type: application/json;charset=utf-8');
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Server initialization error: ' . $e->getMessage()]);
+    die();
+}
 
 // objet HttpRequest qui contient toutes les infos utiles sur la requêtes (voir class/HttpRequest.php)
 $request = new HttpRequest();
@@ -48,19 +73,41 @@ if ($request->getMethod() == "OPTIONS"){
 // on récupère la ressource ciblée par la requête
 $route = $request->getRessources();
 
-if ( isset($router[$route]) ){ // si on a un controleur pour cette ressource
-    $ctrl = $router[$route];  // on le récupère
-    $json = $ctrl->jsonResponse($request); // et on invoque jsonResponse pour obtenir la réponse (json) à la requête (voir class/Controller.php et ProductController.php)
-    if ($json){ 
-        header("Content-type: application/json;charset=utf-8");
-        echo $json;
+try {
+    if ( isset($router[$route]) ){ // si on a un controleur pour cette ressource
+        $ctrl = $router[$route];  // on le récupère
+        $json = $ctrl->jsonResponse($request); // et on invoque jsonResponse pour obtenir la réponse (json) à la requête (voir class/Controller.php et ProductController.php)
+
+        // Récupérer et vider tout contenu produit involontairement par le code inclus
+        $extraOutput = (string) ob_get_clean();
+        if (!empty($extraOutput)) {
+            // Logguer la sortie inattendue pour diagnostic
+            error_log("Unexpected output captured before JSON response: " . $extraOutput);
+        }
+
+        if ($json !== false && $json !== null) { 
+            header("Content-type: application/json;charset=utf-8");
+            echo $json;
+        }
+        else{
+            header('Content-Type: application/json;charset=utf-8');
+            http_response_code(400); // en cas de problème pour produire la réponse, on retourne un 400
+            echo json_encode(['success' => false, 'error' => 'Failed to produce response', 'json' => $json]);
+        }
+        die();
     }
-    else{
-        http_response_code(404); // en cas de problème pour produire la réponse, on retourne un 404
-    }
+    http_response_code(404); // si on a pas de controlleur pour traiter la requête -> 404
+    ob_get_clean();
+    header('Content-Type: application/json;charset=utf-8');
+    echo json_encode(['success' => false, 'error' => 'Route not found']);
+    die();
+} catch (Exception $e) {
+    ob_get_clean();
+    header('Content-Type: application/json;charset=utf-8');
+    http_response_code(500);
+    error_log("Exception in API request: " . $e->getMessage() . " | Trace: " . $e->getTraceAsString());
+    echo json_encode(['success' => false, 'error' => 'Server error: ' . $e->getMessage(), 'trace' => $e->getTraceAsString()]);
     die();
 }
-http_response_code(404); // si on a pas de controlleur pour traiter la requête -> 404
-die();
 
 ?>

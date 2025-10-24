@@ -1,4 +1,4 @@
-import { getRequest, postRequest,JSONpostRequest } from '../lib/api-request.js';
+import { getRequest, postRequest,JSONpostRequest,patchRequest } from '../lib/api-request.js';
 
 let LoginData = {};
 
@@ -127,29 +127,34 @@ LoginData.checkAuth = async function() {
 // Mise à jour du profil utilisateur
 LoginData.updateProfile = async function(formData) {
     try {
-        const data = {
-            action: 'update',
+        console.log('UpdateProfile avec données:', formData);
+        
+        // Convertir FormData en objet
+        const updateData = {
+            action: 'updateProfile',
+            id: LoginData.getCurrentUser()?.id,
+            email: formData.get('email'),
             name: formData.get('name'),
             surname: formData.get('surname'),
-            email: formData.get('email'),
-            password: formData.get('password'),
+            currentPassword: formData.get('currentPassword'),
             newPassword: formData.get('newPassword')
         };
+
         
-        const response = await JSONpostRequest('users', JSON.stringify(data));
+
+        console.log('Envoi des données:', updateData);
+        const response = await patchRequest('users', JSON.stringify(updateData));
+        console.log('Réponse reçue:', response);
+        
         if (response && response.success) {
-            const user = response.user;
-            sessionStorage.setItem('user', JSON.stringify(user));
-            // Mettre à jour l'état du router si disponible
-            if (window.router && typeof window.router.setAuth === 'function') {
-                window.router.setAuth(true);
-            }
-            return user;
+            // Stockage de l'état de connexion mis à jour
+            sessionStorage.setItem('user', JSON.stringify(response.user));
+            return response.user;
         }
-        return false;
+        return response;
     } catch (error) {
         console.error('Erreur lors de la mise à jour du profil:', error);
-        return false;
+        return { success: false, error: error.message };
     }
 };
 

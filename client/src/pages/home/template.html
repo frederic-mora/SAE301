@@ -1,14 +1,179 @@
-<div class="mx-auto max-w-4xl p-6">
-  <h1 class="mb-6 text-4xl font-bold text-gray-900">Accueil</h1>
-  
-<img 
-    src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&h=400&fit=crop" 
-    alt="Image d'accueil - Shopping" 
-    class="mb-6 rounded-lg shadow-lg w-full h-64 object-cover"
-    style="filter: grayscale(1);"
-  />
+<div class="min-h-screen bg-white">
+  <!-- Section Hero -->
+  <section class="w-full">
+    <!-- Hero Banner -->
+    <div class="relative h-96 bg-black overflow-hidden">
+      <!-- Vidéo Mobile (Masquée en desktop) -->
+      <video 
+        class="w-full h-full object-cover opacity-50 hidden md:block"
+        autoplay
+        muted
+        loop
+        playsinline
+        src="https://evisu.co.uk/cdn/shop/videos/c/vp/eae4b2e75f06457c88ffc7c7689a9655/eae4b2e75f06457c88ffc7c7689a9655.HD-720p-4.5Mbps-60684160.mp4?v=0"
+      ></video>
+      
+      <!-- Vidéo Desktop -->
+      <video 
+        class="w-full h-full object-cover opacity-50 md:hidden"
+        autoplay
+        muted
+        loop
+        playsinline
+        src="https://evisu.co.uk/cdn/shop/videos/c/vp/eae4b2e75f06457c88ffc7c7689a9655/eae4b2e75f06457c88ffc7c7689a9655.HD-720p-4.5Mbps-60684160.mp4?v=0"
+      ></video>
+      
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="text-center text-white">
+          <h1 class="text-6xl font-black tracking-wider mb-4">COLLECTION</h1>
+          <p class="text-xl font-light tracking-widest">DÉCOUVREZ NOTRE SÉLECTION</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <p>
-    Bienvenue sur notre plateforme de Click & Collect ! Découvrez une sélection variée de produits et profitez d'une expérience d'achat simple et rapide.
-  </p>
+  <!-- Section Accueil Personnalisée -->
+  <section data-auth-section class="w-full bg-white border-t border-b border-black">
+    <div class="max-w-7xl mx-auto px-6 py-16">
+      <div class="grid grid-cols-2 gap-12">
+        <!-- Colonne Gauche - Bienvenue -->
+        <div class="flex flex-col justify-center">
+          <h2 class="text-5xl font-black tracking-wider mb-6">
+            BIENVENUE,<br/>
+            <span data-user-name class="text-3xl">utilisateur</span>
+          </h2>
+          <p class="text-sm font-light tracking-widest text-gray-600 mb-8">
+            Retrouvez nos produits exclusifs et profitez d'une expérience d'achat personnalisée
+          </p>
+          <div class="space-y-4">
+            <p class="text-xs uppercase tracking-widest font-medium">
+              Email: <span data-user-email class="font-light">-</span>
+            </p>
+            <p class="text-xs uppercase tracking-widest font-medium">
+              Compte: <span data-user-fullname class="font-light">Utilisateur</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Colonne Droite - Actions rapides -->
+        <div class="flex flex-col justify-center space-y-6">
+          <div class="border border-black p-8">
+            <h3 class="text-sm uppercase tracking-widest font-bold mb-4">MES RACCOURCIS</h3>
+            <div class="space-y-3">
+              <a href="/profile" data-link class="block text-sm uppercase tracking-widest py-2 border-b border-gray-300 hover:border-black transition-colors">
+                Modifier mon profil
+              </a>
+              <a href="/products" data-link class="block text-sm uppercase tracking-widest py-2 border-b border-gray-300 hover:border-black transition-colors">
+                Voir les produits
+              </a>
+              <a href="/about" data-link class="block text-sm uppercase tracking-widest py-2 border-b border-gray-300 hover:border-black transition-colors">
+                À propos
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Produits en Avant -->
+  <section class="w-full bg-white">
+    <div class="max-w-7xl mx-auto px-6 py-20">
+      <h2 class="text-4xl font-black tracking-wider mb-12">FALL/WINTER 2025 COLLECTION</h2>
+      
+      <div data-products-container class="grid grid-cols-3 gap-8">
+        <!-- Produit 1 -->
+        <div data-product-0 class="border border-black">
+          <div class="bg-gray-100 h-72 overflow-hidden">
+            <img 
+              data-product-image
+              src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=500&fit=crop" 
+              alt="Produit" 
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div class="p-6">
+            <h3 data-product-name class="text-xs uppercase tracking-widest font-bold mb-2">Produit</h3>
+            <p data-product-price class="text-2xl font-black mb-4">€0</p>
+            <a href="/products" data-link class="inline-block text-xs uppercase tracking-widest border border-black px-6 py-3 hover:bg-black hover:text-white transition-colors">
+              Découvrir
+            </a>
+          </div>
+        </div>
+
+        <!-- Produit 2 -->
+        <div data-product-1 class="border border-black">
+          <div class="bg-gray-100 h-72 overflow-hidden">
+            <img 
+              data-product-image
+              src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=400&h=500&fit=crop" 
+              alt="Produit" 
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div class="p-6">
+            <h3 data-product-name class="text-xs uppercase tracking-widest font-bold mb-2">Produit</h3>
+            <p data-product-price class="text-2xl font-black mb-4">€0</p>
+            <a href="/products" data-link class="inline-block text-xs uppercase tracking-widest border border-black px-6 py-3 hover:bg-black hover:text-white transition-colors">
+              Découvrir
+            </a>
+          </div>
+        </div>
+
+        <!-- Produit 3 -->
+        <div data-product-2 class="border border-black">
+          <div class="bg-gray-100 h-72 overflow-hidden">
+            <img 
+              data-product-image
+              src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=500&fit=crop" 
+              alt="Produit" 
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div class="p-6">
+            <h3 data-product-name class="text-xs uppercase tracking-widest font-bold mb-2">Produit</h3>
+            <p data-product-price class="text-2xl font-black mb-4">€0</p>
+            <a href="/products" data-link class="inline-block text-xs uppercase tracking-widest border border-black px-6 py-3 hover:bg-black hover:text-white transition-colors">
+              Découvrir
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section CTA -->
+  <section class="w-full bg-black text-white">
+    <div class="max-w-7xl mx-auto px-6 py-20">
+      <div class="text-center">
+        <h2 class="text-5xl font-black tracking-wider mb-6">EXPLOREZ LA COLLECTION</h2>
+        <p class="text-lg font-light tracking-widest mb-10">
+          Retrouvez tous nos produits disponibles en Click & Collect
+        </p>
+        <a href="/products" data-link class="inline-block text-xs uppercase tracking-widest border border-white px-8 py-4 hover:bg-white hover:text-black transition-colors">
+          Voir tous les produits
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Info Footer -->
+  <section class="w-full bg-gray-50 border-t border-black">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      <div class="grid grid-cols-3 gap-12 text-center">
+        <div>
+          <h3 class="text-xs uppercase tracking-widest font-bold mb-3">LIVRAISON RAPIDE</h3>
+          <p class="text-xs font-light text-gray-600">Recevez votre commande en 48h</p>
+        </div>
+        <div>
+          <h3 class="text-xs uppercase tracking-widest font-bold mb-3">PAIEMENT SÉCURISÉ</h3>
+          <p class="text-xs font-light text-gray-600">Vos données sont protégées</p>
+        </div>
+        <div>
+          <h3 class="text-xs uppercase tracking-widest font-bold mb-3">SERVICE CLIENT</h3>
+          <p class="text-xs font-light text-gray-600">Disponible 24h/24, 7j/7</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

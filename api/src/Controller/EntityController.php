@@ -51,7 +51,12 @@ abstract class EntityController {
                 break;
         }
 
-        if ($data) { $json = json_encode($data); }
+        // Asurer que nous avons toujours une réponse valide
+        if ($data === false || $data === null) {
+            $data = ['success' => false, 'error' => 'Failed to process request'];
+        }
+        
+        $json = json_encode($data);
         return $json;
     }
 

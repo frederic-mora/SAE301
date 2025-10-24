@@ -31,6 +31,7 @@ class ProductRepository extends EntityRepository {
             d'injection SQL.
         */
         $requete = $this->cnx->prepare("select * from Product where id=:value"); // prepare la requête SQL
+
         $requete->bindParam(':value', $id); // fait le lien entre le "tag" :value et la valeur de $id
         $requete->execute(); // execute la requête
         $answer = $requete->fetch(PDO::FETCH_OBJ);
@@ -45,6 +46,16 @@ class ProductRepository extends EntityRepository {
         $p->setImage($answer->image);
         $p->setPrix($answer->prix);
         $p->setDescription($answer->description);
+
+        $requete=$this->cnx->prepare("SELECT * FROM ProductGallery WHERE idProd=:value");
+        $requete->bindParam(':value', $id);
+        $requete->execute();
+        $answer = $requete->fetch(PDO::FETCH_OBJ);
+        while ($answer != null) {
+            $filename = $answer->image;
+            $p->addImageToGallery($filename);
+            $answer = $requete->fetch(PDO::FETCH_OBJ);
+        }
     
         return $p;
     }
@@ -64,6 +75,18 @@ class ProductRepository extends EntityRepository {
             $p->setImage($obj->image);
             $p->setPrix($obj->prix);
             $p->setDescription($obj->description);
+            
+            // Récupérer les images de la galerie pour ce produit
+            $galleryRequest = $this->cnx->prepare("SELECT * FROM ProductGallery WHERE idProd=:value");
+            $productId = $obj->id;
+            $galleryRequest->bindParam(':value', $productId);
+            $galleryRequest->execute();
+            $galleryImages = $galleryRequest->fetchAll(PDO::FETCH_OBJ);
+            
+            foreach ($galleryImages as $image) {
+                $p->addImageToGallery($image->image);
+            }
+            
             array_push($res, $p);
         }
        

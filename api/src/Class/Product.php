@@ -64,8 +64,20 @@ class Product extends Entity {
             "collection" => $this->collection,
             "price" => $this->price,
             "image" => $this->image,
-            "description" => $this->description
+            "description" => $this->description,
+            "gallery" => $this->gallery
         ];
+    }
+
+   
+    private $gallery = [];
+    
+    public function addImageToGallery($filename) {
+        $this->gallery[] = $filename;
+    }
+    
+    public function getGallery() {
+        return $this->gallery;
     }
 
     /**
