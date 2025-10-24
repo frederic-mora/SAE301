@@ -2,11 +2,10 @@
 
 require_once __DIR__ . '/EntityRepository.php';
 require_once __DIR__ . '/../Class/Product.php';
-// --- AJOUTS US008 ---
+
 require_once __DIR__ . '/../Class/OptionType.php';
 require_once __DIR__ . '/../Class/OptionValue.php';
 require_once __DIR__ . '/../Class/ProductVariant.php';
-// --- FIN AJOUTS US008 ---
 
 
 class ProductRepository extends EntityRepository {
@@ -16,7 +15,8 @@ class ProductRepository extends EntityRepository {
     }
 
     public function find($id): ?Product{
-        $requete = $this->cnx->prepare("select * from Product where id=:value");
+
+        $requete = $this->cnx->prepare("select *, stock from Product where id=:value");
         $requete->bindParam(':value', $id);
         $requete->execute();
         $answer = $requete->fetch(PDO::FETCH_OBJ);
@@ -29,22 +29,36 @@ class ProductRepository extends EntityRepository {
         $p->setPrice($answer->base_price ?? $answer->price); // Utiliser base_price
         $p->setDescription($answer->description);
         $p->setImageUrl($answer->imageUrl);
+        $p->setStock($answer->stock ?? null);
 
         // Récupération des images
         $images = $this->getImagesForProduct($answer->id);
         $p->setImages($images);
 
-        // --- AJOUTS US008 ---
+
         // Récupération des options et variantes
         $p->setOptions($this->getOptionsForProduct($answer->id));
         $p->setVariants($this->getVariantsForProduct($answer->id));
-        // --- FIN AJOUTS US008 ---
+
+        $variants = $p->getVariants();
+        if (!empty($variants)) {
+            $totalStock = 0;
+            foreach ($variants as $variant) {
+                $totalStock += $variant->getStock(); // ProductVariant a une méthode getStock()
+            }
+            $p->setTotalStock($totalStock);
+        } else {
+            // Pas de variantes, utilise le stock du produit de base
+            $p->setTotalStock($p->getStock() ?? 0);
+        }
+
 
         return $p;
     }
 
     public function findAll(): array {
-        $requete = $this->cnx->prepare("select * from Product");
+
+        $requete = $this->cnx->prepare("select *, stock from Product");
         $requete->execute();
         $answer = $requete->fetchAll(PDO::FETCH_OBJ);
         $res = [];
@@ -55,16 +69,30 @@ class ProductRepository extends EntityRepository {
             $p->setPrice($obj->base_price ?? $obj->price); // Utiliser base_price
             $p->setDescription($obj->description);
             $p->setImageUrl($obj->imageUrl);
+            $p->setStock($obj->stock ?? null);
 
             // Récupération des images
             $images = $this->getImagesForProduct($obj->id);
             $p->setImages($images);
 
-            // --- AJOUTS US008 ---
+
             // Récupération des options et variantes
             $p->setOptions($this->getOptionsForProduct($obj->id));
             $p->setVariants($this->getVariantsForProduct($obj->id));
             // --- FIN AJOUTS US008 ---
+
+
+            $variants = $p->getVariants();
+            if (!empty($variants)) {
+                $totalStock = 0;
+                foreach ($variants as $variant) {
+                    $totalStock += $variant->getStock();
+                }
+                $p->setTotalStock($totalStock);
+            } else {
+
+                $p->setTotalStock($p->getStock() ?? 0);
+            }
 
             array_push($res, $p);
         }
@@ -84,7 +112,6 @@ class ProductRepository extends EntityRepository {
         return $images;
     }
 
-    // --- NOUVELLES MÉTHODES US008 ---
 
     /**
      * Récupère les types d'options et leurs valeurs pour un produit donné
@@ -134,7 +161,7 @@ class ProductRepository extends EntityRepository {
             }
         }
 
-        return array_values($optionTypes); // Retourne un tableau d'objets OptionType
+        return array_values($optionTypes);
     }
 
     /**
@@ -154,7 +181,7 @@ class ProductRepository extends EntityRepository {
             $variant->setPrice((float)$row->price);
             $variant->setStock((int)$row->stock);
 
-            // Récupérer les IDs des OptionValue pour cette variante
+
             $sql_values = "SELECT option_value_id FROM VariantOptionValue WHERE product_variant_id = :variantId";
             $stmt_values = $this->cnx->prepare($sql_values);
             $stmt_values->bindValue(':variantId', $row->id);
@@ -168,13 +195,10 @@ class ProductRepository extends EntityRepository {
 
         return $variants;
     }
-    // --- FIN NOUVELLES MÉTHODES US008 ---
-
 
     public function save($product){
-        // ... (La logique de sauvegarde devient plus complexe avec les variantes)
-        // ... (Pour l'instant, on suppose que la création se fait via un back-office)
-        return false; // Simplification pour US008
+
+        return false;
     }
 
     public function delete($id){

@@ -26,6 +26,19 @@ class Product extends Entity {
     private array $variants = []; // Array of ProductVariant objects
     // --- FIN AJOUTS US008 ---
 
+    // --- AJOUTS US009 ---
+    /**
+     * @var int|null Stock du produit de base (si pas de variantes)
+     */
+    private ?int $stock = null;
+    /**
+     * @var int Stock total (calculé).
+     * Si variantes = somme des stocks variantes.
+     * Sinon = stock du produit de base.
+     */
+    private int $totalStock = 0;
+    // --- FIN AJOUTS US009 ---
+
 
     public function __construct(int $id){
         $this->id = $id;
@@ -48,12 +61,14 @@ class Product extends Entity {
             "id" => $this->id,
             "name" => $this->name,
             "category" => $this->idcategory,
-            "price" => $this->price, // Prix de base
+            "price" => $this->price,
             "description" => $this->description,
             "imageUrl" => $this->imageUrl,
             "images" => $this->images,
-            "options" => $this->options,   // --- AJOUT US008 ---
-            "variants" => $this->variants  // --- AJOUT US008 ---
+            "options" => $this->options,
+            "variants" => $this->variants,
+            "stock" => $this->stock,
+            "totalStock" => $this->totalStock
         ];
     }
 
@@ -69,7 +84,6 @@ class Product extends Entity {
         return $this;
     }
 
-    // --- AJOUTS US008 ---
     public function getOptions(): array {
         return $this->options;
     }
@@ -85,8 +99,20 @@ class Product extends Entity {
         $this->variants = $variants;
         return $this;
     }
-    // --- FIN AJOUTS US008 ---
-
+    public function getStock(): ?int {
+        return $this->stock;
+    }
+    public function setStock(?int $stock): self {
+        $this->stock = $stock;
+        return $this;
+    }
+    public function getTotalStock(): int {
+        return $this->totalStock;
+    }
+    public function setTotalStock(int $totalStock): self {
+        $this->totalStock = $totalStock;
+        return $this;
+    }
 
     public function getName(): ?string
     {

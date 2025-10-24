@@ -25,32 +25,25 @@ function htmlToFragment(htmlString) {
     return template.content;
 }
 
-export { genericRenderer, htmlToFragment };
-
 /**
- * Generates the path to an image in the assets folder.
+ * Génère le chemin vers une image dans le dossier assets.
  *
- * @param {string} filename - The name of the image file.
- * @returns {string} - The path to the image in the assets folder.
+ * @param {string} filename - Le nom du fichier image.
+ * @returns {string} - Le chemin de l'image.
  */
 export function assetPath(filename) {
     return `/src/assets/${filename}`;
 }
 
 /**
- * Parse une réponse HTTP en JSON de façon sûre :
- * - lit le texte du body
- * - si vide, retourne null
- * - essaie de parser en JSON, sinon retourne un objet { text }
- *
- * Utilisé par le client pour récupérer les messages d'erreur renvoyés par l'API.
+ * Parse une réponse HTTP en JSON de façon sûre.
+ * ... (description)
  *
  * @param {Response} res - objet Response obtenu via fetch
  * @returns {Promise<any|null>} - JSON parsé, ou objet contenant le texte, ou null
  */
 export async function parseJsonSafe(res) {
     if (!res) return null;
-    // Lire le corps comme texte pour éviter les erreurs si le Content-Type n'est pas JSON
     let text = '';
     try {
         text = await res.text();
@@ -64,3 +57,35 @@ export async function parseJsonSafe(res) {
         return { text };
     }
 }
+
+/**
+ * Retourne un objet décrivant l'état du stock.
+ * Seuil configurable (AC #2)
+ *
+ * @param {number | null | undefined} stock - La quantité en stock.
+ * @returns {{text: string, class: string}} - Le texte et la classe CSS (Tailwind).
+ */
+export function getStockStatus(stock) {
+    // Seuil d'alerte (configurable par l'admin, ici hardcodé)
+    const LOW_STOCK_THRESHOLD = 10;
+    const stockNum = Number(stock);
+
+    if (isNaN(stockNum) || stock === null || stock === undefined) {
+        // Cas où le stock n'est pas défini (ex: anciens produits)
+        return { text: 'Disponibilité non spécifiée', class: 'text-gray-500' };
+    }
+
+    if (stockNum > LOW_STOCK_THRESHOLD) {
+        return { text: 'En stock', class: 'text-green-700' }; // Vert
+    }
+
+    if (stockNum > 0 && stockNum <= LOW_STOCK_THRESHOLD) {
+        return { text: 'Bientôt épuisé', class: 'text-orange-600' }; // Orange
+    }
+
+    // stockNum <= 0
+    return { text: 'Épuisé', class: 'text-red-600' }; // Rouge
+}
+
+// Exporter la nouvelle fonction avec les anciennes
+export { genericRenderer, htmlToFragment };
