@@ -8,6 +8,7 @@ let C = {};
 let _attachedForm = null;
 let _handlerRef = null;
 let _retryTimer = null;
+
 C.handler_submit = async function(ev, formNode) {
     ev.preventDefault();
     const emailEl = formNode.querySelector('#email');
@@ -28,21 +29,47 @@ C.handler_submit = async function(ev, formNode) {
         const data = await login({ email, password });
         if (data && data.user) {
             localStorage.setItem('user', JSON.stringify(data.user));
+            console.log("LocalStorage 'user' mis à jour :", localStorage.getItem('user')); // Pour vérifier
+        } else {
+            // Si data.user n'existe pas, c'est une erreur inattendue
+            throw new Error("Réponse de connexion invalide reçue du serveur.");
         }
 
-        window.location.href = '/';
+        // --- MODIFICATION : Ajouter un petit délai avant la redirection ---
+        // On utilise setTimeout pour attendre 50 millisecondes
+        setTimeout(() => {
+            const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+
+            if (redirectUrl) {
+                sessionStorage.removeItem('redirectAfterLogin');
+                console.log("Redirection vers (avec délai):", redirectUrl);
+                window.location.href = redirectUrl;
+            } else {
+                console.log("Redirection vers / (avec délai)");
+                window.location.href = '/';
+            }
+        }, 50); // Attendre 50ms
+        // --- FIN MODIFICATION ---
+
     } catch (err) {
         console.error('[LoginPage] login error', err);
         if (errorEl) {
             errorEl.textContent = err.message || 'Erreur lors de la connexion';
             errorEl.classList.remove('hidden');
         }
-    } finally {
+        // Assurez-vous que le bouton est réactivé même en cas d'erreur
         if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.classList.remove('opacity-60');
         }
     }
+    // On enlève le finally ici car la redirection se fait dans le setTimeout
+    // finally {
+    //     if (submitBtn) {
+    //         submitBtn.disabled = false;
+    //         submitBtn.classList.remove('opacity-60');
+    //     }
+    // }
 };
 
 

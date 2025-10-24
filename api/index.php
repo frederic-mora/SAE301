@@ -11,6 +11,7 @@ require_once __DIR__ . '/src/Controller/ProductController.php';
 require_once __DIR__ . '/src/Controller/CategoryController.php';
 require_once __DIR__ . '/src/Class/HttpRequest.php';
 require_once __DIR__ . '/src/Controller/ProfilController.php';
+require_once __DIR__ . '/src/Controller/CommandeController.php';
 
 /** IMPORTANT
  *
@@ -34,7 +35,8 @@ require_once __DIR__ . '/src/Controller/ProfilController.php';
 $router = [
     "products" => new ProductController(),
     "categories" => new CategoryController(),
-    "profils" => new ProfilController()
+    "profils" => new ProfilController(),
+    "commandes" => new CommandeController()
 ];
 
 // objet HttpRequest qui contient toutes les infos utiles sur la requête (voir class/HttpRequest.php)
